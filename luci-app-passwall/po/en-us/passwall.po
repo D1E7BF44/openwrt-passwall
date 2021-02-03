@@ -1,0 +1,1181 @@
+msgid "Pass Wall"
+msgstr "PassWall"
+
+msgid "Auto"
+msgid "Automatic"
+
+msgid "RUNNING"
+msgid "Running"
+
+msgid "NOT RUNNING"
+msgid "Not running"
+
+msgid "Working..."
+msgid "The connection is normal"
+
+msgid "Problem detected!"
+msgid "Connection failed"
+
+msgid "Very Fast"
+msgid "Very fast"
+
+msgid "Fast"
+msgid "Soon"
+
+msgid "General"
+msgid "So-so"
+
+msgid "Slow"
+msgid "Very slow"
+
+msgid "Very Slow"
+msgid "Very slow"
+
+msgid "Touch Check"
+msgid "Click me to detect"
+
+msgid "Kernel Unsupported"
+msgid "The kernel does not support"
+
+msgid "Use IPv6"
+msgid "Use IPv6"
+
+msgid "Parsing IP"
+msgid "Domain name resolution IP"
+
+msgid "TCP Server"
+msgid "TCP server"
+
+msgid "UDP Server"
+msgid "UDP server"
+
+msgid "Main Settings"
+msgid "Node Selection"
+
+msgid "Basic Settings"
+msgid "Basic Settings"
+
+msgid "Node List"
+msgid "Node List"
+
+msgid "Other Settings"
+msgid "Advanced settings"
+
+msgid "Load Balancing"
+msgid "Load balancing"
+
+msgid "Enter interface"
+msgid "Enter the interface"
+
+msgid "Rule Manage"
+msgid "Rule Management"
+
+msgid "Rule List Manage"
+msgid "Direct Connection/Proxy List Management"
+
+msgid "Access control"
+msgid "Access Control"
+
+msgid "Watch Logs"
+msgid "View log"
+
+msgid "Node Config"
+msgid "Node Configuration"
+
+msgid "Running Status"
+msgid "Run Status"
+
+msgid "Baidu Connection"
+msgid "Baidu Connect"
+
+msgid "Google Connection"
+msgid "Google Connect"
+
+msgid "GitHub Connection"
+msgid "GitHub connection"
+
+msgid "Node Check"
+msgid "Node Detection"
+
+msgid "Check..."
+msgid "Detecting..."
+
+msgid "Clear"
+msgid "Clear"
+
+msgid "Main switch"
+msgid "Main Switch"
+
+msgid "TCP Node"
+msgid "TCP node"
+
+msgid "UDP Node"
+msgid "UDP node"
+
+msgid "Edit Current Node"
+msgid "Edit current node"
+
+msgid "Socks Config"
+msgid "Socks configuration"
+
+msgid "Socks Node"
+msgid "Socks node"
+
+msgid "Listen Port"
+msgid "Listening port"
+
+msgid "0 is not use"
+msgid "0 is not used"
+
+msgid "Same as the tcp node"
+msgid "Same as TCP node"
+
+msgid "New process"
+msgid "Start another process"
+
+msgid "Current node: %s"
+msgid "Current node: %s"
+
+msgid "For proxy specific list."
+msgid "Used for proxy-specific lists."
+
+msgid "For proxy game network, DNS hijack etc."
+msgid "Used for proxy games or DNS hijacking, etc..."
+
+msgid "The selected server will not use Kcptun."
+msgid "The selected server will not use Kcptun."
+
+msgid "The client can use the router's Socks Servie."
+msgid "The client can use the router's Socks service."
+
+msgid "Filter Mode"
+msgid "Filter mode"
+
+msgid "No Filter"
+msgid "Do not filter"
+
+msgid "Custom DNS"
+msgid "Custom DNS"
+
+msgid "IP:Port mode ecceptable for specify other filtered name services."
+msgid "Define to accept input in the form of IP:Port to specify other domain name service filtering services."
+
+msgid "Local DNS"
+msgid "Local DNS"
+
+msgid "Remote DNS"
+msgid "Remote DNS"
+
+msgid "IP:Port mode acceptable, multi value split with english comma."
+msgid "Accept input in the form of IP:Port, multiple separated by commas."
+
+msgid "If you use dns2socks, only the first one is valid."
+msgid "If dns2socks is used, only the first one will take effect."
+
+msgid "When the selection is not the default, this DNS is forced to be set to dnsmasq upstream DNS."
+msgid "When the selection is not the default, this DNS is forcibly set to dnsmasq upstream DNS."
+
+msgid "When custom, Please follow the format strictly:"
+msgid "When customizing, please strictly follow the following format:"
+
+msgid "Use ChinaDNS-NG"
+msgid "Use ChinaDNS-NG"
+
+msgid "When checked, forced to be set to dnsmasq upstream DNS."
+msgid "When checked, it will be forced to be dnsmasq upstream DNS."
+
+msgid "Use ChinaList"
+msgid "Use chnlist"
+
+msgid "Only useful in non-gfwlist mode."
+msgid "Only available for non-firewall tables."
+
+msgid "When used, the domestic DNS will be used only when the chnlist rule is hit, and the domain name that misses the rule will be resolved by remote DNS."
+msgid "When used, the domestic DNS will be used only when the chnlist rule is hit, and the domain name that misses the rule will be resolved by remote DNS."
+
+msgid "Ali"
+msgid "Ali"
+
+msgid "Baidu"
+msgid "Baidu"
+
+msgid "Resolver For The List Proxied"
+msgid "Resolve the list of proxy domain names"
+
+msgid "Requery DNS By %s"
+msgid "Request DNS via %s"
+
+msgid "Forward To Socks Server"
+msgid "Forward to Socks server"
+
+msgid "Socks Server"
+msgid "Socks server"
+
+msgid "Misconfigured"
+msgid "Improper configuration"
+
+msgid "Make sure socks service is available on this address."
+msgid "Please make sure this Socks service is available."
+
+msgid "ChinaDNS-NG Fair Mode"
+msgid "ChinaDNS-NG Fair Mode"
+
+msgid "Format must be:"
+msgid "The format must be:"
+
+msgid "DoH request address"
+msgid "DoH request address"
+
+msgid "DoH bootstrap DNS"
+msgid "DoH Bootstrap DNS"
+
+msgid "The Bootstrap DNS server is used to resolve the IP address of the DoH resolver you specify as the upstream."
+msgid "Bootstrap DNS server is used to resolve the IP address of the DoH resolver you specified as the upstream."
+
+msgid "Cache Resolved"
+msgid "Cache analysis results"
+
+msgid "Dnsmasq default dns"
+msgid "Dnsmasq's default DNS"
+
+msgid "When the accessed domain name does not exist in the rule list, the default DNS used."
+msgid "When the accessed domain name does not exist in the rule list, the default DNS used."
+
+msgid "Clear IPSET"
+msgid "Clear IPSET"
+
+msgid "Try this feature if the rule modification does not take effect."
+msgid "If the modified rule does not take effect, please try this function."
+
+msgid "The server client can also use this rule to scientifically surf the Internet."
+msgid "The client of the local server can also use this proxy mode to surf the Internet."
+
+msgid "Tips"
+msgid "Tips"
+
+msgid "You can use load balancing for failover."
+msgid "You can use load balancing to implement failover."
+
+msgid "Restore the default configuration method. Input example in the address bar:"
+msgid "Restore the default configuration method, the address bar input example:"
+
+msgid "DNS Export Of Multi WAN"
+msgid "Domestic DNS designated resolution export"
+
+msgid "Node Export Of Multi WAN"
+msgid "Node designated exit"
+
+msgid "Only support Multi Wan."
+msgid "Only multi-line access is valid."
+
+msgid "Not Specify"
+msgid "Do not specify"
+
+msgid "custom"
+msgid "Custom"
+
+msgid "Multi Process Option"
+msgid "Multi-process concurrent"
+
+msgid "you can start SS/SSR with multiple process"
+msgid "Multi-process concurrency can be used when using SS/SSR"
+
+msgid "Process"
+msgid "Process"
+
+msgid "1 Process"
+msgid "Single process"
+
+msgid "Proxy Mode"
+msgid "Proxy Mode"
+
+msgid "If not available, try clearing the cache."
+msgid "If it is not available, please try to clear the cache."
+
+msgid "No Proxy"
+msgid "No proxy"
+
+msgid "Global Proxy"
+msgid "Global proxy"
+
+msgid "GFW List"
+msgid "Firewall table"
+
+msgid "Not China List"
+msgid "Out of China list"
+
+msgid "Game Mode"
+msgid "Game Mode"
+
+msgid "China List"
+msgid "China List"
+
+msgid "Localhost"
+msgid "Local"
+
+msgid "Router Localhost"
+msgid "Router itself"
+
+msgid "Danger"
+msgid "Dangerous"
+
+msgid "Operation"
+msgid "Operation"
+
+msgid "Add Node"
+msgid "Add node"
+
+msgid "Add the node via the link"
+msgid "Add node via link"
+
+msgid "SS/SSR/Vmess/Trojan Link"
+msgid "SS/SSR/Vmess/Trojan link"
+
+msgid "Please enter the correct link, ss:// ssr:// vmess:// trojan://"
+msgid "Please enter the correct link, ss:// ssr:// vmess:// trojan://"
+
+msgid "Clear all nodes"
+msgid "Clear all nodes"
+
+msgid "Are you sure to clear all nodes?"
+msgid "Are you sure you want to clear all nodes?"
+
+msgid "Error"
+msgid "error"
+
+msgid "Delete select nodes"
+msgid "Delete selected node"
+
+msgid "To Top"
+msgid "Top"
+
+msgid "Select"
+msgid "Select"
+
+msgid "DeSelect"
+msgid "Reverse selection"
+
+msgid "Select all"
+msgid "Select all"
+
+msgid "DeSelect all"
+msgid "Select all"
+
+msgid "Are you sure to delete select nodes?"
+msgid "Are you sure you want to delete the selected node?"
+
+msgid "You no select nodes !"
+msgid "You did not select any nodes!"
+
+msgid "Are you sure set to"
+msgid "Are you sure you want to set"
+
+msgid "the server?"
+msgid "Server?"
+
+msgid "You choose node is:"
+msgid "The node you selected is:"
+
+msgid "Timeout"
+msgid "Timeout"
+
+msgid "Node Remarks"
+msgid "Node Remarks"
+
+msgid "Add Mode"
+msgid "Add Method"
+
+msgid "Type"
+msgid "Type"
+
+msgid "Balancing"
+msgid "Load balancing"
+
+msgid "Xray_balancing"
+msgid "Xray Load Balancing"
+
+msgid "V2ray_balancing"
+msgid "V2ray Load Balancing"
+
+msgid "Shunt"
+msgid "Diversion"
+
+msgid "Xray_shunt"
+msgid "Xray Diversion"
+
+msgid "V2ray_shunt"
+msgid "V2ray Diversion"
+
+msgid "Preproxy"
+msgid "Pre-Proxy"
+
+msgid "Use the default node for the transit."
+msgid "Use the default node proxy forwarding."
+
+msgid "Use the under node for the transit."
+msgid "Use the following node agent to forward."
+
+msgid "No shunt rules? Click me to go to add."
+msgid "No diversion rules? Click me to add them."
+
+msgid "Domain Strategy"
+msgid "Domain name resolution strategy"
+
+msgid "'AsIs': Only use domain for routing. Default value."
+msgid "AsIs: Only use domain names for routing selection. Default value."
+
+msgid "'IPIfNonMatch': When no rule matches current domain, resolves it into IP addresses (A or AAAA records) and try all rules again."
+msgid "IPIfNonMatch: When the domain name does not match any rules, resolve the domain name into an IP (A record or AAAA record) for matching again."
+
+msgid "'IPOnDemand': As long as there is a IP-based rule, resolves the domain into IP immediately."
+msgid "IPOnDemand: When encountering any IP-based rules when matching, the domain name is immediately resolved to IP for matching."
+
+msgid "Load balancing node list"
+msgid "Load balancing node list"
+
+msgid "Load balancing node list, <a target='_blank' href='https://toutyrater.github.io/routing/balance2.html'>document</a>"
+msgid "List of load balancing nodes, <a target='_blank' href='https://toutyrater.github.io/routing/balance2.html'>Document principle</a>"
+
+msgid "Share Current"
+msgid "What You See Is What You Get"
+
+msgid "From Share URL"
+msgid "Import configuration information"
+
+msgid "Build Share URL"
+msgid "Export configuration information"
+
+msgid "Import Finished"
+msgid "Import complete:"
+
+msgid "Not a supported scheme:"
+msgid "This style is not supported:"
+
+msgid "Invalid Share URL Format"
+msgid "Invalid sharing information"
+
+msgid "User cancelled"
+msgid "User cancelled"
+
+msgid "Paste Share URL Here"
+msgid "Paste sharing information here"
+
+msgid "Unable share to clipboard, copy to batch mode still:"
+msgid "Unable to share URL to clipboard, copy to batch import temporary input:"
+
+msgid "Share to clipboard successfully, copy to batch mode still:"
+msgid "Successfully copy and share URL to clipboard and batch import temporary input:"
+
+msgid "Faltal on get option, please help in debug:"
+msgid "The code is wrong, please help catch the bug:"
+
+msgid "Faltal on set option, please help in debug:"
+msgid "The code is wrong, please help catch the bug:"
+
+msgid "Address"
+msgid "Address"
+
+msgid "Address (Support Domain Name)"
+msgid "Address (support domain name)"
+
+msgid "Trojan Verify Cert"
+msgid "Verify Certificate"
+
+msgid "Trojan Cert Path"
+msgid "Certificate Path"
+
+msgid "Finger Print"
+msgid "Fingerprint forgery"
+
+msgid "Shadowsocks2"
+msgid "Secondary encryption"
+
+msgid "Encrypt Method"
+msgid "Encryption"
+
+msgid "Kcptun Switch"
+msgid "Kcptun switch"
+
+msgid "Latency"
+msgid "Delay"
+
+msgid "Show Add Mode"
+msgid "Show how to add"
+
+msgid "Show Group"
+msgid "Display group"
+
+msgid "Group"
+msgid "Group"
+
+msgid "Auto Ping"
+msgid "Auto Ping"
+
+msgid "This will automatically ping the node for latency"
+msgid "After selecting and saving the application, the node will be automatically pinged"
+
+msgid "Use TCP Detection delay"
+msgid "Use TCP to detect delay"
+
+msgid "This will use tcping replace ping detection of node"
+msgid "After selecting and saving the application, use tcping to replace the ping detection node"
+
+msgid "Concise display nodes"
+msgid "Show nodes concisely"
+
+msgid "Apply"
+msgid "Apply"
+
+msgid "Use"
+msgid "Use"
+
+msgid "Copy"
+msgid "Copy"
+
+msgid "Delay Settings"
+msgid "Timed configuration"
+
+msgid "Open and close Daemon"
+msgid "Start the daemon"
+
+msgid "Delay Start"
+msgid "Delayed start at boot time"
+
+msgid "Units:seconds"
+msgid "Unit: second"
+
+msgid "Units:minutes"
+msgid "Unit: minutes"
+
+msgid "Open and close automatically"
+msgid "Timed automatic switch"
+
+msgid "Automatically turn off time"
+msgid "Automatic shutdown time"
+
+msgid "Automatically turn on time"
+msgid "Auto start time"
+
+msgid "Automatically restart time"
+msgid "Automatic restart time"
+
+msgid "Forwarding Settings"
+msgid "Forward configuration"
+
+msgid "TCP No Redir Ports"
+msgid "TCP does not forward port"
+
+msgid "UDP No Redir Ports"
+msgid "UDP does not forward port"
+
+msgid "Fill in the ports you don't want to be forwarded by the agent, with the highest priority."
+msgid "Fill in the port you do not want to be forwarded by the proxy, the priority is the highest."
+
+msgid "TCP Redir Ports"
+msgid "TCP forwarding port"
+
+msgid "UDP Redir Ports"
+msgid "UDP forwarding port"
+
+msgid "No patterns are used"
+msgid "Not used"
+
+msgid "All"
+msgid "All"
+
+msgid "Common Use"
+msgid "Commonly used"
+
+msgid "Only Web"
+msgid "Web pages only"
+
+msgid "or more"
+msgid "and above"
+
+msgid "or less"
+msgid "and below"
+
+msgid "Default"
+msgid "default"
+
+msgid "Close"
+msgid "Close"
+
+msgid "Proxy Settings"
+msgid "Proxy configuration"
+
+msgid "TCP Redir Port"
+msgid "TCP transparent proxy port"
+
+msgid "UDP Redir Port"
+msgid "UDP transparent proxy port"
+
+msgid "Socks Proxy Port"
+msgid "Socks proxy port"
+
+msgid "Kcptun Port"
+msgid "Kcptun port"
+
+msgid "Custom Dnsmasq"
+msgid "Customize Dnsmasq settings"
+
+msgid "Setting a parameter error will cause dnsmasq fail to start."
+msgid "Wrong parameter settings will cause Dnsmasq to fail to start."
+
+msgid "Auto Switch"
+msgid "Auto switch"
+
+msgid "When there is no server, an automatic reconnect scheme is used"
+msgid "When there is no server, use the automatic reconnection scheme"
+
+msgid "How often is a diagnosis made"
+msgid "Detection time"
+
+msgid "Automatic switching cannot be used when this option is checked"
+msgid "When this option is checked, automatic switching cannot be used"
+
+msgid "Main node"
+msgid "Master Node"
+
+msgid "List of backup nodes"
+msgid "List of standby nodes"
+
+msgid "Restore Switch"
+msgid "Resume switching"
+
+msgid "When detects main node is available, switch back to the main node."
+msgid "When the master node is detected to be available, switch back to the master node."
+
+msgid "Configure this node with 127.0.0.1: this port"
+msgid "Use 127.0.0.1 and this port to configure the node"
+
+msgid "Enable Load Balancing"
+msgid "Enable load balancing"
+
+msgid "Console Username"
+msgid "Console account"
+
+msgid "Console Password"
+msgid "Console password"
+
+msgid "Console Port"
+msgid "Console Port"
+
+msgid "In the browser input routing IP plus port access, such as:192.168.1.1:1188"
+msgid "Enter the router IP and port access in the browser, such as: 192.168.1.1:1188"
+
+msgid "Haproxy Port"
+msgid "Load balancing port"
+
+msgid "Add a node, Export Of Multi WAN Only support Multi Wan. Load specific gravity range 1-256. Multiple primary servers can be load balanced, standby will only be enabled when the primary server is offline! Multiple groups can be set, Haproxy port same one for each group."
+msgid "Adding a node, specifying the export function is for multi-WAN users. The load ratio ranges from 1-256. Multiple primary servers can be load balanced, and the backup will only be enabled when the primary server is offline! You can set multiple groups, load balancing If the port is the same, it is a group."
+
+msgid "Note that the node configuration parameters for load balancing must be consistent, otherwise problems can arise!"
+msgid "Attention, the node configuration parameters of load balancing must be consistent, otherwise problems will occur!"
+
+msgid "Node"
+msgid "Node"
+
+msgid "Node Address"
+msgid "Node address"
+
+msgid "Node Port"
+msgid "Node Port"
+
+msgid "Node Weight"
+msgid "Load Proportion"
+
+msgid "Export Of Multi WAN"
+msgid "Multiple WAN designated outlets"
+
+msgid "Main"
+msgid "Main"
+
+msgid "Mode"
+msgid "Mode"
+
+msgid "Primary"
+msgid "Main"
+
+msgid "Standby"
+msgid "Backup"
+
+msgid "Manually update"
+msgid "Manual update"
+
+msgid "Enable custom URL"
+msgid "Enable custom rule address"
+
+msgid "GFW domains(gfwlist) Update URL"
+msgid "Firewall domain name list (gfwlist) update URL"
+
+msgid "China IPs(chnroute) Update URL"
+msgid "Chinese IP segment (chnroute) update URL"
+
+msgid "China IPv6s(chnroute6) Update URL"
+msgid "Chinese IPv6 segment (chnroute6) update URL"
+
+msgid "Rule status"
+msgid "Rule version"
+
+msgid "Enable auto update rules"
+msgid "Enable automatic update rules"
+
+msgid "Week update rules"
+msgid "Update time week"
+
+msgid "Day update rules"
+msgid "Update time hours"
+
+msgid "Every day"
+msgid "Everyday"
+
+msgid "day"
+msgid "Day"
+
+msgid "Week"
+msgid "week"
+
+msgid "oclock"
+msgid "point"
+
+msgid "Update..."
+msgid "Update in progress"
+
+msgid "It is the latest version"
+msgid "Already the latest version"
+
+msgid "Update successful"
+msgid "Updated successfully"
+
+msgid "Click to update"
+msgid "Click to update"
+
+msgid "Updating..."
+msgid "Update in progress"
+
+msgid "Unexpected error"
+msgid "Unexpected error"
+
+msgid "Updating, are you sure to close?"
+msgid "Update is in progress, are you sure you want to close?"
+
+msgid "Downloading..."
+msgid "Downloading"
+
+msgid "Unpacking..."
+msgid "Unzipping"
+
+msgid "Moving..."
+msgid "Moving"
+
+msgid "App Update"
+msgid "Component update"
+
+msgid "Please confirm that your firmware supports FPU."
+msgid "Please make sure your firmware supports FPU."
+
+msgid "if you want to run from memory, change the path, /tmp beginning then save the application and update it manually."
+msgid "If you want to run from the memory, please change the path to the beginning of /tmp, then save the application, and then manually update."
+
+msgid "Make sure there is enough space to install %s"
+msgid "Make sure there is enough space to install %s"
+
+msgid "App Path"
+msgid "Program path"
+
+msgid "%s App Path"
+msgid "%s program path"
+
+msgid "%s Client App Path"
+msgid "%s client program path"
+
+msgid "Trojan-Go Version API"
+msgid "Trojan-Go version API"
+
+msgid "alternate API URL for version checking"
+msgid "API URL for version checking"
+
+msgid "Node Subscribe"
+msgid "Node Subscription"
+
+msgid "Subscribe Remark"
+msgid "Subscription note (airport)"
+
+msgid "Subscribe URL"
+msgid "Subscription URL"
+
+msgid "Please input the subscription url first, save and submit before updating. If you subscribe to update, it is recommended to delete all subscriptions and then re-subscribe."
+msgid "Please enter the subscription URL to save the application before updating. If the subscription node is updated, it is recommended to delete all subscriptions and subscribe again."
+
+msgid "Subscribe via proxy"
+msgid "Subscribe via proxy"
+
+msgid "Enable auto update subscribe"
+msgid "Turn on automatic renewal subscription"
+
+msgid "Manual subscription"
+msgid "Manually subscribe"
+
+msgid "Delete All Subscribe Node"
+msgid "Delete all subscription nodes"
+
+msgid "Filter keyword Mode"
+msgid "Filter keyword mode"
+
+msgid "Discard List"
+msgid "Discard list"
+
+msgid "Keep List"
+msgid "Reserved List"
+
+msgid "Add"
+msgid "Add"
+
+msgid "ACLs"
+msgid "Access Control"
+
+msgid "ACLs is a tools which used to designate specific IP proxy mode, IP or MAC address can be entered."
+msgid "Access control list is a tool used to specify special IP proxy mode. You can fill in only one item for IP and MAC address."
+
+msgid "Remarks"
+msgid "Remarks"
+
+msgid "Direct List"
+msgid "Direct connection list"
+
+msgid "Proxy List"
+msgid "Proxy List"
+
+msgid "Join the direct hosts list of domain names will not proxy."
+msgid "The added domain name does not use proxy, it is valid for all modes. It has the highest priority."
+
+msgid "These had been joined ip addresses will not proxy. Please input the ip address or ip address segment,every line can input only one ip address. For example: 192.168.0.0/24 or 223.5.5.5."
+msgid "The added IP segment does not use proxy and is valid for all modes. It has the highest priority. You can enter the IP address or address segment, such as 192.168.0.0/24 or 223.5.5.5, one line per address segment."
+
+msgid "These had been joined websites will use proxy. Please input the domain names of websites,every line can input only one website domain. For example: google.com."
+msgid "The added domain name will act as a proxy. Enter the website domain name, such as google.com, one line per address segment."
+
+msgid "These had been joined ip addresses will use proxy.Please input the ip address or ip address segment,every line can input only one ip address.For example: 35.24.0.0/24 or 8.8.4.4."
+msgid "The added IP segment will be a proxy. You can enter the IP address or address segment, such as: 35.24.0.0/24 or 8.8.4.4, one line for each address segment."
+
+msgid "Not valid domain name, please re-enter!"
+msgid "Not a valid domain name, please re-enter!"
+
+msgid "Not valid IP format, please re-enter!"
+msgid "Not a valid IP format, please re-enter!"
+
+msgid "Plaintext: If this string matches any part of the targeting domain, this rule takes effet. Example: rule'sina.com' matches targeting domain'sina.com','sina.com.cn' and'www.sina. com', but not'sina.cn'."
+msgid "Pure string: When this string matches any part of the target domain name, the rule takes effect. For example,'sina.com' can match'sina.com','sina.com.cn' and'www.sina.com' , But does not match'sina.cn'."
+
+msgid "Regular expression: Begining with'regexp:', the rest is a regular expression. When the regexp matches targeting domain, this rule takes effect. Example: rule'regexp:\\.goo.*\\.com$' matches 'www.google.com' and'fonts.googleapis.com', but not'google.com'."
+msgid "Regular expression: Start with'regexp:', and the rest is a regular expression. When this regular expression matches the target domain name, the rule takes effect. For example,'regexp:\\.goo.*\\.com$ 'Matches'www.google.com','fonts.googleapis.com', but not'google.com'."
+
+msgid "Subdomain (recommended): Begining with'domain:' and the rest is a domain. When the targeting domain is exactly the value, or is a subdomain of the value, this rule takes effect. Example: rule'domain:v2ray. com' matches'www.v2ray.com','v2ray.com', but not'xv2ray.com'."
+msgid "Subdomain name (recommended): Start with'domain:' and the rest is a domain name. When this domain name is the target domain name or its subdomain name, this rule takes effect. For example,'domain:v2ray.com' matches'www.v2ray' .com','v2ray.com', but does not match'xv2ray.com'."
+
+msgid "Full domain: Begining with'full:' and the rest is a domain. When the targeting domain is exactly the value, the rule takes effect. Example: rule'domain:v2ray.com' matches'v2ray.com', but not'www.v2ray.com'."
+msgid "Full match: Start with'full:', and the rest is a domain name. When this domain name completely matches the target domain name, the rule takes effect. For example,'full:v2ray.com' matches'v2ray.com' but not'www .v2ray.com'."
+
+msgid "Pre-defined domain list: Begining with'geosite:' and the rest is a name, such as geosite:google or geosite:cn."
+msgid "List of predefined domain names: start with'geosite:', and the rest is a name, such as geosite:google or geosite:cn."
+
+msgid "Domains from file: Such as'ext:file:tag'. The value must begin with ext: (lowercase), and followed by filename and tag. The file is placed in resource directory, and has the same format of geosite. dat. The tag must exist in the file."
+msgid "Load domain name from file: like'ext:file:tag', it must start with ext: (lowercase), followed by the file name and tag. The file is stored in the resource directory. The file format is the same as geosite.dat. The tag must be Exist in the file."
+
+msgid "IP: such as '127.0.0.1'."
+msgid "IP: Shaped like '127.0.0.1'."
+
+msgid "CIDR: such as '127.0.0.0/8'."
+msgid "CIDR: Shaped like '10.0.0.0/8'."
+
+msgid "GeoIP: such as'geoip:cn'. It begins with geoip: (lower case) and followed by two letter of country code."
+msgid "GeoIP: is shaped like'geoip:cn', and must start with geoip: (lowercase) followed by a two-character country code. It supports almost all countries that can access the Internet."
+
+msgid "IPs from file: Such as'ext:file:tag'. The value must begin with ext: (lowercase), and followed by filename and tag. The file is placed in resource directory, and has the same format of geoip. dat. The tag must exist in the file."
+msgid "Load IP from a file: like'ext:file:tag', it must start with ext: (lowercase), followed by the file name and tag. The file is stored in the resource directory. The file format is the same as geoip.dat. The tag must be in Exists in the file."
+
+msgid "Clear logs"
+msgid "Empty log"
+
+msgid "Need node support required"
+msgid "Need node support"
+
+msgid "HAProxy cannot be used with KCP."
+msgid "HAProxy cannot be used with KCP"
+
+msgid "Password"
+msgid "Password"
+
+msgid "Connection Timeout"
+msgid "Connection timeout period"
+
+msgid "Local Port"
+msgid "Local Port"
+
+msgid "TCP Fast Open"
+msgid "TCP fast open"
+
+msgid "Need node support required"
+msgid "Need node support"
+
+msgid "plugin"
+msgid "Plugin"
+
+msgid "opts"
+msgid "Plugin Options"
+
+msgid "Xray is currently directly compatible with V2ray and used."
+msgid "Xray is currently directly compatible with V2ray and used."
+
+msgid "Protocol"
+msgid "Protocol Name"
+
+msgid "Protocol_param"
+msgid "Protocol Parameters"
+
+msgid "Obfs"
+msgid "Confusion"
+
+msgid "Obfs_param"
+msgid "Confusion parameter"
+
+msgid "Plugin Name"
+msgid "Plugin name"
+
+msgid "Plugin Arguments"
+msgid "Plugin Parameters"
+
+msgid "Proxy IPv6"
+msgid "Proxy IPv6"
+
+msgid "The IPv6 traffic can be proxyed when selected"
+msgid "If selected, it can proxy IPv6 traffic"
+
+msgid "Use Kcptun"
+msgid "Use Kcptun"
+
+msgid "Please confirm whether the Kcptun is installed. If not, please go to Rule Update download installation."
+msgid "Please confirm whether Kcptun is installed, if not, please go to the automatic update download and install."
+
+msgid "Kcptun Server"
+msgid "Kcptun server"
+
+msgid "Default:Current Server"
+msgid "Leave blank to use current server"
+
+msgid "Kcptun Config"
+msgid "Kcptun parameter configuration"
+
+msgid "--crypt aes192 --key abc123 --mtu 1350 --sndwnd 128 --rcvwnd 1024 --mode fast"
+msgid "There is no need to configure the server IP and local port in the parameters. The parameters and formats that need to be configured are as follows: --crypt aes192 --key abc123 --mtu 1350 --sndwnd 128 --rcvwnd 1024 --mode fast"
+
+msgid "Brook Protocol"
+msgid "Brook Agreement"
+
+msgid "Use TLS"
+msgid "Use TLS"
+
+msgid "Naiveproxy Protocol"
+msgid "Naiveproxy protocol"
+
+msgid "V2ray Protocol"
+msgid "V2ray protocol"
+
+msgid "Alter ID"
+msgid "Additional ID (alterId)"
+
+msgid "User Level"
+msgid "User level (level)"
+
+msgid "Transport"
+msgid "Transmission method"
+
+msgid "Camouflage Type"
+msgid "Camouflage Type"
+
+msgid "Transport Layer Encryption"
+msgid "Transport layer encryption"
+
+msgid "Whether or not transport layer encryption is enabled, \"none\" for unencrypted, \"tls\" for using TLS, \"xtls\" for using XTLS."
+msgid "Whether to enable transport layer encryption, the supported options are \"none\" means no encryption, \"tls\" means TLS, and \"xtls\" means XTLS."
+
+msgid "Original Trojan only supported'tls', please choose'tls'."
+msgid "The original Trojan only supports'tls', please select'tls'."
+
+msgid "Domain"
+msgid "domain name"
+
+msgid "allowInsecure"
+msgid "Allow insecure connections"
+
+msgid "Whether unsafe connections are allowed. When checked, Certificate validation will be skipped."
+msgid "Whether to allow insecure connections. When checked, certificate verification will be skipped."
+
+msgid "<br />none: default, no masquerade, data sent is packets with no characteristics.<br />srtp: disguised as an SRTP packet, it will be recognized as video call data (such as FaceTime).<br / >utp: packets disguised as uTP will be recognized as bittorrent downloaded data.<br />wechat-video: packets disguised as WeChat video calls.<br />dtls: disguised as DTLS 1.2 packet.<br />wireguard: disguised as a WireGuard packet. (not really WireGuard protocol)"
+msgid "<br />none: The default value, no disguise, the data sent is a data packet without characteristics.<br />srtp: Disguised as an SRTP packet, it will be recognized as video call data (such as FaceTime).< br />utp: disguised as a uTP packet, it will be recognized as BT download data.<br />wechat-video: disguised as a WeChat video call packet.<br />dtls: disguised as a DTLS 1.2 packet.< br />wireguard: disguised as a WireGuard packet. (Not the real WireGuard protocol)"
+
+msgid "A legal file path. This file must not exist before running."
+msgid "A valid file path. This file must not exist before running."
+
+msgid "TCP Open Socks"
+msgid "Enable Socks"
+
+msgid "When using this TCP node, whether to open the socks proxy at the same time"
+msgid "When using this TCP node, whether to open the socks proxy at the same time"
+
+msgid "Do not conflict with other ports"
+msgid "Port cannot conflict"
+
+msgid "Auth"
+msgid "Identity Authentication"
+
+msgid "Socks for authentication"
+msgid "Socks authentication method"
+
+msgid "Socks protocol authentication, support anonymous and password."
+msgid "The authentication method of the Socks protocol supports anonymous and account password methods."
+
+msgid "anonymous"
+msgid "Anonymous"
+
+msgid "User Password"
+msgid "Account password"
+
+msgid "Username and Password must be used together!"
+msgid "Account and password must be used at the same time!"
+
+msgid "Node Number"
+msgid "Number of nodes"
+
+msgid "You can only set up a maximum of %s nodes for the time being, Used for access control."
+msgid "Currently, only %s nodes can be set up for access control."
+
+msgid "Status info"
+msgid "Status Information"
+
+msgid "Big icon"
+msgid "Large icon"
+
+msgid "Show node check"
+msgid "Display node detection"
+
+msgid "Show Show IP111"
+msgid "Display IP111"
+
+msgid "Hide menu method, input example in the address bar:"
+msgid "Hide menu method, address bar input example:"
+
+msgid "After the hidden to the display, input example in the address bar:"
+msgid "When you hide it and want to show it again, the address bar input example:"
+
+msgid "The MTProto protocol must be 32 characters and can only contain characters from 0 to 9 and a to f."
+msgid "MTProto protocol must be 32 characters and can only contain characters between 0-9 and a-f."
+
+msgid "Whether to receive PROXY protocol, when this node want to be fallback or forwarded by proxy, it must be enable, otherwise it cannot be used."
+msgid "Whether to receive the PROXY protocol, when the node is to be dropped or forwarded by a proxy, it must be enabled, otherwise it cannot be used."
+
+msgid "transit node"
+msgid "Transfer to this node"
+
+msgid "Bind Local"
+msgid "Local Monitoring"
+
+msgid "When selected, it can only be accessed locally, It is recommended to turn on when using reverse proxies or be fallback."
+msgid "When checked, this port can only be accessed by this machine. It is recommended to check this option when you want to be reverse proxy or fall back."
+
+msgid "Accept LAN Access"
+msgid "Accept LAN access"
+
+msgid "When selected, it can access lan, this will not be safe!"
+msgid "When checked, you can directly access the LAN, which is not safe! (It is not recommended to enable it in non-special circumstances)
+
+msgid "Enable Remote"
+msgid "Enable forwarding"
+
+msgid "You can forward to Nginx/Caddy/V2ray WebSocket and more."
+msgid "You can forward to Nginx/Caddy/V2ray WebSocket, etc."
+
+msgid "Remote Address"
+msgid "Remote address"
+
+msgid "Remote Port"
+msgid "Remote Port"
+
+msgid "as:"
+msgid "Such as:"
+
+msgid "Public key absolute path"
+msgid "Absolute path of public key file"
+
+msgid "Private key absolute path"
+msgid "Absolute path of private key file"
+
+msgid "Can't find this file!"
+msgid "Cannot find this file!"
+
+msgid "Public key and Private key path can not be empty!"
+msgid "Public key and private key file path cannot be empty!"
+
+msgid "Server-Side"
+msgid "Server side"
+
+msgid "Server Config"
+msgid "Server Configuration"
+
+msgid "Users Manager"
+msgid "User Management"
+
+msgid "Logs"
+msgid "Log"
+
+msgid "Log"
+msgid "Log"
+
+msgid "Log Level"
+msgid "Log level"
+
+msgid "Not enabled log"
+msgid "Log is not enabled"
+
+msgid "UDP Forward"
+msgid "UDP forwarding"
+
+msgid "You did not fill in the %s path. Please save and apply then update manually."
+msgid "You did not fill in the %s path. Please save the application and update manually."
+
+msgid "Not installed unzip, Can't unzip!"
+msgid "Unzip is not installed and cannot be decompressed."
+
+msgid "Can't determine ARCH, or ARCH not supported."
+msgid "The ARCH architecture could not be confirmed, or it is not supported."
+
+msgid "Get remote version info failed."
+msgid "Failed to obtain remote version information."
+
+msgid "New version found, but failed to get new version download url."
+msgid "A new version was found, but the download address of the new version could not be obtained."
+
+msgid "Download url is required."
+msgid "Please specify the download address."
+
+msgid "File download failed or timed out: %s"
+msgid "File download failed or timed out: %s"
+
+msgid "File path required."
+msgid "Please specify the file path."
+
+msgid "Can't find client in file: %s"
+msgid "Unable to find client in file: %s"
+
+msgid "Client file is required."
+msgid "Please specify the client file."
+
+msgid "The client file is not suitable for current device."
+msgid "The client file is not suitable for the current device."
+
+msgid "Can't move new file to path: %s"
+msgid "Cannot move new file to: %s"
+
+msgid "DNS Settings"
+msgid "DNS Settings"
