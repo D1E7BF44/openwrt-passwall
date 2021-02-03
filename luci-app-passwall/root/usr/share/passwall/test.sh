@@ -45,7 +45,7 @@ test_proxy() {
 	if [ "$status" = "200" ]; then
 		result=0
 	else
-		status2=$(test_url "https://www.baidu.com" $try)
+		status2=$(test_url "https://api.ipify.org" $try)
 		if [ "$status2" = "200" ]; then
 			result=1
 		else
@@ -67,13 +67,13 @@ test_auto_switch() {
 
 	status=$(test_proxy)
 	if [ "$status" == 2 ]; then
-		echolog "自动切换检测：无法连接到网络，请检查网络是否正常！"
+		echolog "Automatic switching detection: unable to connect to the network, please check whether the network is normal"
 		return 2
 	fi
 	
 	local restore_switch=$(config_t_get auto_switch restore_switch 0)
 	if [ "$restore_switch" == "1" ]; then
-		#检测主节点是否能使用
+		#Check whether the master node can be used
 		local main_node=$(config_t_get global tcp_node nil)
 		if [ "$main_node" != "nil" ] && [ "$now_node" != "$main_node" ]; then
 			local node_type=$(echo $(config_n_get $main_node type) | tr 'A-Z' 'a-z')
@@ -95,8 +95,8 @@ test_auto_switch() {
 			proxy_status=$(test_url "https://www.google.com/generate_204" 3 3 "-x $curlx")
 			top -bn1 | grep -v "grep" | grep "/var/etc/${CONFIG}/auto_switch.json" | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1
 			if [ "$proxy_status" -eq 200 ]; then
-				#主节点正常，切换到主节点
-				echolog "自动切换检测：${TYPE}主节点正常，切换到主节点！"
+				#The main node is normal, switch to the main node
+				echolog "Automatic switching detection: ${TYPE} master node is normal, switch to master node!"
 				/usr/share/${CONFIG}/app.sh node_switch ${TYPE} ${main_node}
 				return 0
 			fi
@@ -104,18 +104,18 @@ test_auto_switch() {
 	fi
 	
 	if [ "$status" == 0 ]; then
-		#echolog "自动切换检测：${TYPE}节点【$(config_n_get $now_node type) $(config_n_get $now_node remarks)】正常。"
+		#echolog "Automatic switching detection: ${TYPE} node [$(config_n_get $now_node type) $(config_n_get $now_node remarks)] is normal."
 		return 0
 	elif [ "$status" == 1 ]; then
-		echolog "自动切换检测：${TYPE}节点异常，开始切换节点！"
+		echolog "Automatic switching detection: ${TYPE} node is abnormal, start switching nodes!"
 		local new_node
 		in_backup_nodes=$(echo $b_tcp_nodes | grep $now_node)
-		# 判断当前节点是否存在于备用节点列表里
+		# Determine whether the current node exists in the standby node list
 		if [ -z "$in_backup_nodes" ]; then
-			# 如果不存在，设置第一个节点为新的节点
+			# If it does not exist, set the first node as a new node
 			new_node=$(echo $b_tcp_nodes | awk -F ' ' '{print $1}')
 		else
-			# 如果存在，设置下一个备用节点为新的节点
+			# If it exists, set the next standby node as the new node
 			#local count=$(expr $(echo $b_tcp_nodes | grep -o ' ' | wc -l) + 1)
 			local next_node=$(echo $b_tcp_nodes | awk -F "$now_node" '{print $2}' | awk -F " " '{print $1}')
 			if [ -z "$next_node" ]; then
@@ -126,10 +126,10 @@ test_auto_switch() {
 		fi
 		/usr/share/${CONFIG}/app.sh node_switch ${TYPE} ${new_node}
 		sleep 10s
-		# 切换节点后等待10秒后再检测一次，如果还是不通继续切，直到可用为止
+		# After switching the node, wait 10 seconds and then check again, if it still fails, continue to switch until it is available
 		status2=$(test_proxy)
 		if [ "$status2" -eq 0 ]; then
-			echolog "自动切换检测：${TYPE}节点切换完毕！"
+			echolog "Automatic switching detection: ${TYPE} node switching is complete"
 			return 0
 		elif [ "$status2" -eq 1 ]; then
 			test_auto_switch ${TYPE} "${b_tcp_nodes}"
