@@ -110,8 +110,8 @@ s.anonymous = true
 s.addremove = false
 
 o = s:option(MultiValue, "status", translate("Status info"))
-o:value("big_icon", translate("Big icon")) -- 大图标
-o:value("show_check_port", translate("Show node check")) -- 显示节点检测
-o:value("show_ip111", translate("Show Show IP111")) -- 显示IP111
+o:value("big_icon", translate("Big icon"))
+o:value("show_check_port", translate("Show node check"))
+o:value("show_IPIFY", translate("Show Show IPIFY"))
 
 return m
