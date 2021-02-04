@@ -125,7 +125,7 @@ function gen_config(user)
             -- error = "/var/etc/passwall_server/log/" .. user[".name"] .. ".log",
             loglevel = ("1" == user.log) and user.loglevel or "none"
         },
-        -- 传入连接
+
         inbounds = {
             {
                 listen = (user.bind_local == "1") and "127.0.0.1" or nil,
@@ -203,7 +203,7 @@ function gen_config(user)
                 }
             }
         },
-        -- 传出连接
+
         outbounds = outbounds,
         routing = routing
     }
