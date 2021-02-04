@@ -37,7 +37,7 @@ function s.remove(e, t)
 end
 
 s.sortable = true
--- 简洁模式
+-- Concise mode
 if true then
     o = s:option(DummyValue, "add_mode", "")
     o.cfgvalue = function(t, n)
@@ -64,9 +64,9 @@ if true then
         if type == "Xray" then
             local protocol = m:get(n, "protocol")
             if protocol == "_balancing" then
-                protocol = "负载均衡"
+                protocol = "balancing"
             elseif protocol == "_shunt" then
-                protocol = "分流"
+                protocol = "shunt"
             elseif protocol == "vmess" then
                 protocol = "VMess"
             elseif protocol == "vless" then
