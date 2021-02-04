@@ -13,20 +13,19 @@ o.rmempty = false
 
 ---- gfwlist URL
 o = s:option(Value, "gfwlist_url", translate("GFW domains(gfwlist) Update URL"))
-o:value("https://cdn.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt", translate("Loukky/gfwlist-by-loukky"))
 o:value("https://cdn.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt", translate("gfwlist/gfwlist"))
 o.default = "https://cdn.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt"
 
 ----chnroute  URL
 o = s:option(Value, "chnroute_url", translate("China IPs(chnroute) Update URL"))
-o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang.CN"))
-o:value("https://ispip.clang.cn/all_cn_cidr.txt", translate("Clang.CN.CIDR"))
-o.default = "https://ispip.clang.cn/all_cn.txt"
+o:value("https://example.com", translate("Clang.CN"))
+o:value("https://example.com", translate("Clang.CN.CIDR"))
+o.default = "https://example.com"
 
 ----chnroute6 URL
 o = s:option(Value, "chnroute6_url", translate("China IPv6s(chnroute6) Update URL"))
-o:value("https://ispip.clang.cn/all_cn_ipv6.txt", translate("Clang.CN.IPv6"))
-o.default = "https://ispip.clang.cn/all_cn_ipv6.txt"
+o:value("https://example.com", translate("Clang.CN.IPv6"))
+o.default = "https://example.com"
 
 s:append(Template(appname .. "/rule/rule_version"))
 
