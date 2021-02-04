@@ -17,7 +17,7 @@ local chnlist_update = 0
 local comment_pattern = "^[!\\[@]+"
 local ip_pattern = "^%d+%.%d+%.%d+%.%d+"
 local domain_pattern = "([%w%-%_]+%.[%w%.%-%_]+)[%/%*]*"
-local excluded_domain = {"apple.com","sina.cn","sina.com.cn","baidu.com","byr.cn","jlike.com","weibo.com","zhongsou.com","youdao.com","sogou.com","so.com","soso.com","aliyun.com","taobao.com","jd.com","qq.com"}
+local excluded_domain = {}
 
 -- gfwlist parameter
 local mydnsip = '127.0.0.1'
@@ -27,8 +27,8 @@ local ipsetname = 'gfwlist'
 -- custom url
 local enable_custom_url = 1
 local gfwlist_url = ucic:get_first(name, 'global_rules', "gfwlist_url", "https://cdn.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt")
-local chnroute_url = ucic:get_first(name, 'global_rules', "chnroute_url", "https://ispip.clang.cn/all_cn.txt")
-local chnroute6_url =  ucic:get_first(name, 'global_rules', "chnroute6_url", "https://ispip.clang.cn/all_cn_ipv6.txt")
+local chnroute_url = ucic:get_first(name, 'global_rules', "chnroute_url", "https://example.com")
+local chnroute6_url =  ucic:get_first(name, 'global_rules', "chnroute6_url", "https://example.com")
 local chnlist_url_1 = 'https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/accelerated-domains.china.conf'
 local chnlist_url_2 = 'https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/apple.china.conf'
 local chnlist_url_3 = 'https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/google.china.conf'
@@ -99,16 +99,12 @@ local function curl(url, file)
 	end
 end
 
---获取gfwlist
 local function fetch_gfwlist()
-	--请求gfwlist
 	local sret = curl(gfwlist_url, "/tmp/gfwlist.txt")
 	if sret == 200 then
-		--解码gfwlist
 		local gfwlist = io.open("/tmp/gfwlist.txt", "r")
 		local decode = base64_dec(gfwlist:read("*all"))
 		gfwlist:close()
-		--写回gfwlist
 		gfwlist = io.open("/tmp/gfwlist.txt", "w")
 		gfwlist:write(decode)
 		gfwlist:close()
@@ -117,23 +113,17 @@ local function fetch_gfwlist()
 	return sret;
 end
 
---获取chnroute
 local function fetch_chnroute()
-	--请求chnroute
 	local sret = curl(chnroute_url, "/tmp/chnroute_tmp")
 	return sret;
 end
 
---获取chnroute6
 local function fetch_chnroute6()
-	--请求chnroute6
 	local sret = curl(chnroute6_url, "/tmp/chnroute6_tmp")
 	return sret;
 end
 
---获取chnlist
 local function fetch_chnlist()
-	--请求chnlist
 	local sret = 0
 	local sret1 = curl(chnlist_url_1, "/tmp/chnlist_1")
 	local sret2 = curl(chnlist_url_2, "/tmp/chnlist_2")
@@ -154,7 +144,6 @@ local function check_excluded_domain(value)
 	end
 end
 
---gfwlist转码至dnsmasq格式
 local function generate_gfwlist()
 	local domains = {}
 	local out = io.open("/tmp/gfwlist_tmp", "w")
@@ -176,7 +165,6 @@ local function generate_gfwlist()
 	out:close()
 end
 
---处理合并chnlist列表
 local function generate_chnlist()
 	local domains = {}
 	local out = io.open("/tmp/cdn_tmp", "w")
@@ -202,14 +190,12 @@ local function generate_chnlist()
 		end
 	end
 
-	--写入临时文件
 	for k,v in pairs(domains) do
 		out:write(string.format("%s\n", k))
 	end
 
 	out:close()
 
-	--删除重复条目并排序
 	luci.sys.call("cat /tmp/cdn_tmp | sort -u > /tmp/chnlist_tmp")
 end
 
@@ -236,12 +222,12 @@ if gfwlist_update == 0 and chnroute_update == 0 and chnroute6_update == 0 and ch
 	os.exit(0)
 end
 
-log("开始更新规则...")
+log("Start updating rules...")
 if tonumber(enable_custom_url) == 1 then
 	local new_version = os.date("%Y-%m-%d")
-	log("已启用自定义规则地址...")
+	log("Custom rule address enabled...")
 	if tonumber(gfwlist_update) == 1 then
-		log("开始更新gfwlist...")
+		log("Start updating gfwlist...")
 		local old_md5 = luci.sys.exec("echo -n $(md5sum " .. rule_path .. "/gfwlist.conf | awk '{print $1}')")
 		local status = fetch_gfwlist()
 		if status == 200 then
@@ -251,19 +237,19 @@ if tonumber(enable_custom_url) == 1 then
 				luci.sys.exec("mv -f /tmp/gfwlist_tmp " .. rule_path .. "/gfwlist.conf")
 				ucic:set(name, ucic:get_first(name, 'global_rules'), "gfwlist_version", new_version)
 				reboot = 1
-				log("更新gfwlist成功...")
+				log("Successfully updated gfwlist...")
 			else
-				log("gfwlist版本一致，不用更新。")
+				log("The gfwlist version is the same, no need to update.")
 			end
 		else
-			log("gfwlist文件下载失败！")
+			log("Failed to download gfwlist file")
 		end
 		os.remove("/tmp/gfwlist.txt")
 		os.remove("/tmp/gfwlist_tmp")
 	end
 
 	if tonumber(chnroute_update) == 1 then
-		log("开始更新chnroute...")
+		log("Start updating chnroute...")
 		local old_md5 = luci.sys.exec("echo -n $(md5sum " .. rule_path .. "/chnroute | awk '{print $1}')")
 		local status = fetch_chnroute()
 		if status == 200 then
@@ -272,18 +258,18 @@ if tonumber(enable_custom_url) == 1 then
 				luci.sys.exec("mv -f /tmp/chnroute_tmp " .. rule_path .. "/chnroute")
 				ucic:set(name, ucic:get_first(name, 'global_rules'), "chnroute_version", new_version)
 				reboot = 1
-				log("更新chnroute成功...")
+				log("Update chnroute successfully...")
 			else
-				log("chnroute版本一致，不用更新。")
+				log("The chnroute version is the same, no need to update.")
 			end
 		else
-			log("chnroute文件下载失败！")
+			log("chnroute file download failed")
 		end
 		os.remove("/tmp/chnroute_tmp")
 	end
 
 	if tonumber(chnroute6_update) == 1 then
-		log("开始更新chnroute6...")
+		log("Start updating chnroute6...")
 		local old_md5 = luci.sys.exec("echo -n $(md5sum " .. rule_path .. "/chnroute6 | awk '{print $1}')")
 		local status = fetch_chnroute6()
 		if status == 200 then
@@ -292,18 +278,18 @@ if tonumber(enable_custom_url) == 1 then
 				luci.sys.exec("mv -f /tmp/chnroute6_tmp " .. rule_path .. "/chnroute6")
 				ucic:set(name, ucic:get_first(name, 'global_rules'), "chnroute6_version", new_version)
 				reboot = 1
-				log("更新chnroute6成功...")
+				log("Update chnroute6 successfully...")
 			else
-				log("chnroute6版本一致，不用更新。")
+				log("The chnroute6 version is the same, no need to update.")
 			end
 		else
-			log("chnroute6文件下载失败！")
+			log("chnroute6 file download failed")
 		end
 		os.remove("/tmp/chnroute6_tmp")
 	end
 	
 	if tonumber(chnlist_update) == 1 then
-		log("开始更新chnlist...")
+		log("Start updating chnlist...")
 		local old_md5 = luci.sys.exec("echo -n $(md5sum " .. rule_path .. "/chnlist | awk '{print $1}')")
 		local status = fetch_chnlist()
 		if status == 200 then
@@ -313,12 +299,12 @@ if tonumber(enable_custom_url) == 1 then
 				luci.sys.exec("mv -f /tmp/chnlist_tmp " .. rule_path .. "/chnlist")
 				ucic:set(name, ucic:get_first(name, 'global_rules'), "chnlist_version", new_version)
 				reboot = 1
-				log("更新chnlist成功...")
+				log("Update chnlist successfully...")
 			else
-				log("chnlist版本一致，不用更新。")
+				log("The chnlist version is the same, no need to update")
 			end
 		else
-			log("chnlist文件下载失败！")
+			log("chnlist file download failed")
 		end
 		os.remove("/tmp/chnlist_1")
 		os.remove("/tmp/chnlist_2")
@@ -336,7 +322,7 @@ ucic:save(name)
 luci.sys.call("uci commit " .. name)
 
 if reboot == 1 then
-	log("重启服务，应用新的规则。")
+	log("Restart the service and apply the new rules")
 	luci.sys.call("/usr/share/" .. name .. "/iptables.sh flush_ipset &&  /etc/init.d/" .. name .. " restart")
 end
-log("规则脚本执行完毕...")
+log("The rule script is executed...")
