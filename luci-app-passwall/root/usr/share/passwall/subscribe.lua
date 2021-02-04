@@ -41,7 +41,7 @@ local log = function(...)
 	end
 end
 
--- 获取各项动态配置的当前服务器，可以用 get 和 set， get必须要获取到节点表
+-- Get the current server of each dynamic configuration, you can use get and set, get must get the node table
 local CONFIG = {}
 do
 	local function import_config(protocol)
@@ -70,7 +70,7 @@ do
 		local node_id = t.node
 		CONFIG[#CONFIG + 1] = {
 			log = true,
-			remarks = "Socks节点列表[" .. i .. "]",
+			remarks = "Socks Node list[" .. i .. "]",
 			currentNodeId = node_id,
 			currentNode = node_id and ucic2:get_all(application, node_id) or nil,
 			set = function(o, server)
@@ -87,12 +87,12 @@ do
 		for k,node in ipairs(tcp_node_table) do
 			nodes[#nodes + 1] = {
 				log = true,
-				remarks = "TCP备用节点的列表[" .. k .. "]",
+				remarks = "TCP spare nodes list[" .. k .. "]",
 				currentNodeId = node,
 				currentNode = node and ucic2:get_all(application, node) or nil,
 				set = function(o, server)
 					for kk, vv in pairs(CONFIG) do
-						if (vv.remarks == "TCP备用节点的列表") then
+						if (vv.remarks == "TCP spare nodes list") then
 							table.insert(vv.new_nodes, server)
 						end
 					end
@@ -100,13 +100,13 @@ do
 			}
 		end
 		CONFIG[#CONFIG + 1] = {
-			remarks = "TCP备用节点的列表",
+			remarks = "TCP spare nodes list",
 			nodes = nodes,
 			new_nodes = new_nodes,
 			set = function(o)
 				for kk, vv in pairs(CONFIG) do
-					if (vv.remarks == "TCP备用节点的列表") then
-						log("刷新自动切换的TCP备用节点的列表")
+					if (vv.remarks == "TCP spare nodes list") then
+						log("Refresh the list of TCP standby nodes that are automatically switched")
 						ucic2:set_list(application, "@auto_switch[0]", "tcp_node", vv.new_nodes)
 					end
 				end
@@ -123,7 +123,7 @@ do
 					log = false,
 					currentNodeId = _node_id,
 					currentNode = _node_id and ucic2:get_all(application, _node_id) or nil,
-					remarks = "分流" .. e.remarks .. "节点",
+					remarks = "shunt" .. e.remarks .. "node",
 					set = function(o, server)
 						ucic2:set(application, node_id, e[".name"], server)
 						o.newNodeId = server
@@ -136,7 +136,7 @@ do
 				log = false,
 				currentNodeId = default_node_id,
 				currentNode = default_node_id and ucic2:get_all(application, default_node_id) or nil,
-				remarks = "分流默认节点",
+				remarks = "Shunt default node",
 				set = function(o, server)
 					ucic2:set(application, node_id, "default_node", server)
 					o.newNodeId = server
@@ -148,7 +148,7 @@ do
 				log = false,
 				currentNodeId = main_node_id,
 				currentNode = main_node_id and ucic2:get_all(application, main_node_id) or nil,
-				remarks = "分流默认前置代理节点",
+				remarks = "Shunt default proxy node",
 				set = function(o, server)
 					ucic2:set(application, node_id, "main_node", server)
 					o.newNodeId = server
@@ -167,7 +167,7 @@ do
 						remarks = node,
 						set = function(o, server)
 							for kk, vv in pairs(CONFIG) do
-								if (vv.remarks == "负载均衡节点列表" .. node_id) then
+								if (vv.remarks == "Load balancing node list" .. node_id) then
 									table.insert(vv.new_nodes, server)
 								end
 							end
@@ -176,13 +176,13 @@ do
 				end
 			end
 			CONFIG[#CONFIG + 1] = {
-				remarks = "负载均衡节点列表" .. node_id,
+				remarks = "Load balancing node list" .. node_id,
 				nodes = nodes,
 				new_nodes = new_nodes,
 				set = function(o)
 					for kk, vv in pairs(CONFIG) do
-						if (vv.remarks == "负载均衡节点列表" .. node_id) then
-							log("刷新负载均衡节点列表")
+						if (vv.remarks == "Load balancing node list" .. node_id) then
+							log("Refreshing Load balancing node list")
 							ucic2:foreach(application, uciType, function(node2)
 								if node2[".name"] == node[".name"] then
 									local index = node2[".index"]
@@ -211,7 +211,7 @@ do
 	end
 end
 
--- 判断是否过滤节点关键字
+-- Determine whether to filter node keywords
 local filter_keyword_mode = ucic2:get(application, "@global_subscribe[0]", "filter_keyword_mode") or "0"
 local filter_keyword_discard_list = ucic2:get(application, "@global_subscribe[0]", "filter_discard_list") or {}
 local filter_keyword_keep_list = ucic2:get(application, "@global_subscribe[0]", "filter_keep_list") or {}
@@ -234,16 +234,16 @@ local function is_filter_keyword(value)
 	return false
 end
 
--- 分割字符串
+-- Split string
 local function split(full, sep)
 	if full then
-		full = full:gsub("%z", "") -- 这里不是很清楚 有时候结尾带个\0
+		full = full:gsub("%z", "") -- It’s not very clear here, sometimes with a \0 at the end
 		local off, result = 1, {}
 		while true do
 			local nStart, nEnd = full:find(sep, off)
 			if not nEnd then
 				local res = ssub(full, off, slen(full))
-				if #res > 0 then -- 过滤掉 \0
+				if #res > 0 then -- Filter out \0
 					tinsert(result, res)
 				end
 				break
@@ -292,13 +292,13 @@ local function base64Decode(text)
 		return raw
 	end
 end
--- 处理数据
+-- Data processing
 local function processData(szType, content, add_mode)
 	--log(content, add_mode)
 	local result = {
 		timeout = 60,
 		add_mode = add_mode,
-		is_sub = add_mode == '导入' and 0 or 1
+		is_sub = add_mode == 'Import' and 0 or 1
 	}
 	if szType == 'ssr' then
 		local dat = split(content, "/%?")
@@ -565,7 +565,7 @@ local function processData(szType, content, add_mode)
 		result.group = content.airport
 		result.remarks = content.remarks
 	else
-		log('暂时不支持' .. szType .. "类型的节点订阅，跳过此节点。")
+		log('Not supported temporarily' .. szType .. "Type of node subscription, skip this node.")
 		return nil
 	end
 	if not result.remarks or result.remarks == "" then
@@ -612,52 +612,52 @@ local function truncate_nodes()
 	end)
 
 	ucic2:foreach(application, uciType, function(node)
-		if (node.is_sub or node.hashkey) and node.add_mode ~= '导入' then
+		if (node.is_sub or node.hashkey) and node.add_mode ~= 'Import' then
 			ucic2:delete(application, node['.name'])
 		end
 	end)
 	ucic2:commit(application)
 
-	log('在线订阅节点已全部删除')
+	log('All online subscription nodes have been deleted')
 end
 
 local function select_node(nodes, config)
 	local server
 	if config.currentNode then
 		for id, node in pairs(nodes) do
-			-- 特别优先级 分流 + 备注
+			-- Special priority Diversion + Remarks
 			if config.currentNode.protocol and config.currentNode.protocol == '_shunt' then
 				if node.remarks == config.currentNode.remarks then
-					log('更新【' .. config.remarks .. '】分流匹配节点：' .. node.remarks)
+					log('Update ['.. config.remarks ..'] shunt matching node:' .. node.remarks)
 					server = id
 					break
 				end
 			end
-			-- 特别优先级 负载均衡 + 备注
+			-- Special priority load balancing + remarks
 			if config.currentNode.protocol and config.currentNode.protocol == '_balancing' then
 				if node.remarks == config.currentNode.remarks then
-					log('更新【' .. config.remarks .. '】负载均衡匹配节点：' .. node.remarks)
+					log('Update ['.. config.remarks ..'] load balancing matching node:' .. node.remarks)
 					server = id
 					break
 				end
 			end
-			-- 第一优先级 cfgid
+			-- First priority cfgid
 			if not server then
 				if id == config.currentNode['.name'] then
 					if config.log == nil or config.log == true then
-						log('更新【' .. config.remarks .. '】第一匹配节点：' .. node.remarks)
+						log('Update ['.. config.remarks ..'] the first matching node:' .. node.remarks)
 					end
 					server = id
 					break
 				end
 			end
-			-- 第二优先级 类型 + IP + 端口
+			-- Second priority type + IP + port
 			if not server then
 				if config.currentNode.type and config.currentNode.address and config.currentNode.port then
 					if node.type and node.address and node.port then
 						if node.type == config.currentNode.type and (node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port) then
 							if config.log == nil or config.log == true then
-								log('更新【' .. config.remarks .. '】第二匹配节点：' .. node.remarks)
+								log('Update ['.. config.remarks ..'] the second matching node:' .. node.remarks)
 							end
 							server = id
 							break
@@ -665,13 +665,13 @@ local function select_node(nodes, config)
 					end
 				end
 			end
-			-- 第三优先级 IP + 端口
+			-- Third priority IP + port
 			if not server then
 				if config.currentNode.address and config.currentNode.port then
 					if node.address and node.port then
 						if node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port then
 							if config.log == nil or config.log == true then
-								log('更新【' .. config.remarks .. '】第三匹配节点：' .. node.remarks)
+								log('Update ['.. config.remarks ..'] the third matching node:' .. node.remarks)
 							end
 							server = id
 							break
@@ -679,13 +679,13 @@ local function select_node(nodes, config)
 					end
 				end
 			end
-			-- 第四优先级 IP
+			-- Fourth priority IP
 			if not server then
 				if config.currentNode.address then
 					if node.address then
 						if node.address == config.currentNode.address then
 							if config.log == nil or config.log == true then
-								log('更新【' .. config.remarks .. '】第四匹配节点：' .. node.remarks)
+								log('Update ['.. config.remarks ..'] the fourth matching node:' .. node.remarks)
 							end
 							server = id
 							break
@@ -693,13 +693,13 @@ local function select_node(nodes, config)
 					end
 				end
 			end
-			-- 第五优先级备注
+			-- Fifth priority note
 			if not server then
 				if config.currentNode.remarks then
 					if node.remarks then
 						if node.remarks == config.currentNode.remarks then
 							if config.log == nil or config.log == true then
-								log('更新【' .. config.remarks .. '】第五匹配节点：' .. node.remarks)
+								log('Update ['.. config.remarks ..'] fifth matching node:' .. node.remarks)
 							end
 							server = id
 							break
@@ -709,12 +709,12 @@ local function select_node(nodes, config)
 			end
 		end
 	end
-	-- 还不行 随便找一个
+	-- 
 	if not server then
 		server = ucic2:get_all(application, '@' .. uciType .. '[0]')
 		if server then
 			if config.log == nil or config.log == true then
-				log('【' .. config.remarks .. '】' .. '无法找到最匹配的节点，当前已更换为：' .. server.remarks)
+				log('【'.. config.remarks ..'】' ..'The most matching node could not be found, currently it has been replaced with:' .. server.remarks)
 			end
 			server = server[".name"]
 		end
@@ -726,12 +726,12 @@ end
 
 local function update_node(manual)
 	if next(nodeResult) == nil then
-		log("更新失败，没有可用的节点信息")
+		log("Update failed, no node information is available")
 		return
 	end
 	-- delet all for subscribe nodes
 	ucic2:foreach(application, uciType, function(node)
-		-- 如果是手动导入的节点就不参与删除
+		-- If it is a manually imported node, it will not participate in the deletion
 		if manual == 0 and (node.is_sub or node.hashkey) and node.add_mode ~= '导入' then
 			ucic2:delete(application, node['.name'])
 		end
@@ -793,7 +793,7 @@ local function parse_link(raw, remark, manual)
 		local nodes, szType
 		local all_nodes = {}
 		tinsert(nodeResult, all_nodes)
-		-- SSD 似乎是这种格式 ssd:// 开头的
+		-- SSD seems to start with this format ssd://
 		if raw:find('ssd://') then
 			szType = 'ssd'
 			add_mode = remark
@@ -807,16 +807,16 @@ local function parse_link(raw, remark, manual)
 				password = nodes.password
 			}
 			local servers = {}
-			-- SS里面包着 干脆直接这样
+			-- Bread in SS
 			for _, server in ipairs(nodes.servers) do
 				tinsert(servers, setmetatable(server, { __index = extra }))
 			end
 			nodes = servers
 		else
-			-- ssd 外的格式
+			-- Formats other than ssd
 			if manual then
 				nodes = split(raw:gsub(" ", "\n"), "\n")
-				add_mode = '导入'
+				add_mode = 'Import'
 			else
 				nodes = split(base64Decode(raw):gsub(" ", "\n"), "\n")
 				add_mode = remark
@@ -839,28 +839,28 @@ local function parse_link(raw, remark, manual)
 						end
 					end
 				else
-					log('跳过未知类型: ' .. szType)
+					log('Skip unknown types: ' .. szType)
 				end
 				-- log(result)
 				if result then
 					if (not manual and is_filter_keyword(result.remarks)) or
 						not result.address or
 						result.remarks == "NULL" or
-						result.address:match("[^0-9a-zA-Z%-%_%.%s]") or -- 中文做地址的 也没有人拿中文域名搞，就算中文域也有Puny Code SB 机场
-						not result.address:find("%.") or -- 虽然没有.也算域，不过应该没有人会这样干吧
-						result.address:sub(#result.address) == "." -- 结尾是.
+						result.address:match("[^0-9a-zA-Z%-%_%.%s]") or
+						not result.address:find("%.") or
+						result.address:sub(#result.address) == "."
 					then
-						log('丢弃过滤节点: ' .. result.type .. ' 节点, ' .. result.remarks)
+						log('Discard the filter node:' .. result.type .. ' node, ' .. result.remarks)
 					else
 						tinsert(all_nodes, result)
 					end
 				end
 			end
 		end
-		log('成功解析节点数量: ' .. #all_nodes)
+		log('Number of successfully resolved nodes:' .. #all_nodes)
 	else
 		if not manual then
-			log('获取到的节点内容为空...')
+			log('The content of the obtained node is empty...')
 		end
 	end
 end
@@ -873,7 +873,7 @@ local execute = function()
 			if enabled and enabled == "1" then
 				local remark = obj.remark
 				local url = obj.url
-				log('正在订阅: ' .. url)
+				log('Subscribing: ' .. url)
 				local raw = curl(url)
 				parse_link(raw, remark)
 			end
@@ -887,15 +887,15 @@ if arg[1] then
 	if arg[1] == "start" then
 		local count = luci.sys.exec("echo -n $(uci show " .. application .. " | grep @subscribe_list | grep -c \"enabled='1'\")")
 		if count and tonumber(count) > 0 then
-			log('开始订阅...')
+			log('Subscribing')
 			xpcall(execute, function(e)
 				log(e)
 				log(debug.traceback())
-				log('发生错误, 正在恢复服务')
+				log('An error has occurred and the service is being restored')
 			end)
-			log('订阅完毕...')
+			log('Subscribed...')
 		else
-			log('未设置订阅或未启用订阅, 请检查设置...')
+			log('Subscription not set or not enabled, please check the settings...')
 		end
 	elseif arg[1] == "add" then
 		local f = assert(io.open("/tmp/links.conf", 'r'))
