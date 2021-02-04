@@ -105,7 +105,7 @@ protocol:value("trojan", "Trojan")
 protocol:value("mtproto", "MTProto")
 protocol:depends("type", "Xray")
 
--- Brook协议
+-- Brook
 brook_protocol = s:option(ListValue, "brook_protocol", translate("Protocol"))
 brook_protocol:value("server", "Brook")
 brook_protocol:value("wsserver", "WebSocket")
@@ -293,7 +293,7 @@ flow:value("xtls-rprx-direct")
 flow:value("xtls-rprx-direct-udp443")
 flow:depends("xtls", "1")
 
--- [[ TLS部分 ]] --
+-- [[ TLS ]] --
 
 tls_allowInsecure = s:option(Flag, "tls_allowInsecure", translate("allowInsecure"), translate("Whether unsafe connections are allowed. When checked, Certificate validation will be skipped."))
 tls_allowInsecure.default = "0"
@@ -381,7 +381,7 @@ trojan_plugin_arg.placeholder = "eg: [\"-config\", \"test.json\"]"
 trojan_plugin_arg:depends({ plugin_type = "shadowsocks" })
 trojan_plugin_arg:depends({ plugin_type = "other" })
 
--- [[ WebSocket部分 ]]--
+-- [[ WebSocket ]]--
 
 ws_host = s:option(Value, "ws_host", translate("WebSocket Host"))
 ws_host:depends("transport", "ws")
@@ -395,7 +395,7 @@ ws_path:depends("ss_transport", "ws")
 ws_path:depends("trojan_transport", "h2+ws")
 ws_path:depends("trojan_transport", "ws")
 
--- [[ HTTP/2部分 ]]--
+-- [[ HTTP/2 ]]--
 
 h2_host = s:option(Value, "h2_host", translate("HTTP/2 Host"))
 h2_host:depends("transport", "h2")
@@ -409,23 +409,23 @@ h2_path:depends("ss_transport", "h2")
 h2_path:depends("trojan_transport", "h2+ws")
 h2_path:depends("trojan_transport", "h2")
 
--- [[ TCP部分 ]]--
+-- [[ TCP ]]--
 
--- TCP伪装
+-- TCP
 tcp_guise = s:option(ListValue, "tcp_guise", translate("Camouflage Type"))
 tcp_guise:value("none", "none")
 tcp_guise:value("http", "http")
 tcp_guise:depends("transport", "tcp")
 
--- HTTP域名
+-- HTTP
 tcp_guise_http_host = s:option(DynamicList, "tcp_guise_http_host", translate("HTTP Host"))
 tcp_guise_http_host:depends("tcp_guise", "http")
 
--- HTTP路径
+-- HTTP
 tcp_guise_http_path = s:option(DynamicList, "tcp_guise_http_path", translate("HTTP Path"))
 tcp_guise_http_path:depends("tcp_guise", "http")
 
--- [[ mKCP部分 ]]--
+-- [[ mKCP ]]--
 
 mkcp_guise = s:option(ListValue, "mkcp_guise", translate("Camouflage Type"), translate('<br />none: default, no masquerade, data sent is packets with no characteristics.<br />srtp: disguised as an SRTP packet, it will be recognized as video call data (such as FaceTime).<br />utp: packets disguised as uTP will be recognized as bittorrent downloaded data.<br />wechat-video: packets disguised as WeChat video calls.<br />dtls: disguised as DTLS 1.2 packet.<br />wireguard: disguised as a WireGuard packet. (not really WireGuard protocol)'))
 for a, t in ipairs(header_type_list) do mkcp_guise:value(t) end
@@ -461,12 +461,12 @@ mkcp_writeBufferSize:depends("transport", "mkcp")
 mkcp_seed = s:option(Value, "mkcp_seed", translate("KCP Seed"))
 mkcp_seed:depends("transport", "mkcp")
 
--- [[ DomainSocket部分 ]]--
+-- [[ DomainSocket ]]--
 
 ds_path = s:option(Value, "ds_path", "Path", translate("A legal file path. This file must not exist before running."))
 ds_path:depends("transport", "ds")
 
--- [[ QUIC部分 ]]--
+-- [[ QUIC ]]--
 quic_security = s:option(ListValue, "quic_security", translate("Encrypt Method"))
 quic_security:value("none")
 quic_security:value("aes-128-gcm")
@@ -484,7 +484,7 @@ acceptProxyProtocol = s:option(Flag, "acceptProxyProtocol", translate("acceptPro
 acceptProxyProtocol:depends({ type = "Xray", transport = "tcp" })
 acceptProxyProtocol:depends({ type = "Xray", transport = "ws" })
 
--- [[ Fallback部分 ]]--
+-- [[ Fallback ]]--
 fallback = s:option(Flag, "fallback", translate("Fallback"))
 fallback:depends({ type = "Xray", protocol = "vless", transport = "tcp" })
 fallback:depends({ type = "Xray", protocol = "trojan", transport = "tcp" })
