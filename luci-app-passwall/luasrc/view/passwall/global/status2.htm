@@ -99,11 +99,11 @@ local status = api.uci_get_type("global_other", "status", "")
 		
 		<div class="cbi-value">
 			<label class="cbi-value-title">
-				<%:Baidu Connection%>
+				<%:IP-API%>
 			</label>
 			<div class="cbi-value-field">
-				<input type="button" class="cbi-button cbi-input-apply" value="<%:Check%>" onclick="return check_connect(this, 'baidu', 'www.baidu.com')" />
-				<font id="_baidu_status"></font>
+				<input type="button" class="cbi-button cbi-input-apply" value="<%:Check%>" onclick="return check_connect(this, 'IP-API', 'ip-api.com')" />
+				<font id="_IP-API"></font>
 			</div>
 		</div>
 		<div class="cbi-value">
@@ -136,11 +136,11 @@ local status = api.uci_get_type("global_other", "status", "")
 			</div>
 		</div>
 		<% end %>
-		<% if status:find("show_ip111") then %>
+		<% if status:find("show_IPIFY") then %>
 		<div class="cbi-value">
 			<label class="cbi-value-title"></label>
 			<div class="cbi-value-field">
-				<input type="button" class="cbi-button cbi-input-reload" value="IP111.cn" onclick="javascript:window.open('http://www.ip111.cn/','target');" />
+				<input type="button" class="cbi-button cbi-input-reload" value="api.ipify.org" onclick="javascript:window.open('api.ipify.org/','target');" />
 			</div>
 		</div>
 		<% end %>
