@@ -121,12 +121,12 @@ for k, e in ipairs(api.get_valid_nodes()) do
     end
 end
 
--- 负载均衡列表
+-- balancing
 balancing_node = s:option(DynamicList, "balancing_node", translate("Load balancing node list"), translate("Load balancing node list, <a target='_blank' href='https://toutyrater.github.io/routing/balance2.html'>document</a>"))
 for k, v in pairs(nodes_table) do balancing_node:value(v.id, v.remarks) end
 balancing_node:depends("protocol", "_balancing")
 
--- 分流
+-- shunt
 uci:foreach(appname, "shunt_rules", function(e)
     o = s:option(ListValue, e[".name"], '<a href="../shunt_rules/' .. e[".name"] .. '">' .. translate(e.remarks) .. "</a>")
     o:value("nil", translate("Close"))
@@ -169,7 +169,7 @@ domainStrategy.description = "<br /><ul><li>" .. translate("'AsIs': Only use dom
 domainStrategy:depends("protocol", "_balancing")
 domainStrategy:depends("protocol", "_shunt")
 
--- Brook协议
+-- Brook
 brook_protocol = s:option(ListValue, "brook_protocol", translate("Protocol"))
 brook_protocol:value("client", translate("Brook"))
 brook_protocol:value("wsclient", translate("WebSocket"))
@@ -184,7 +184,7 @@ end
 brook_tls = s:option(Flag, "brook_tls", translate("Use TLS"))
 brook_tls:depends("brook_protocol", "wsclient")
 
--- Naiveproxy协议
+-- Naiveproxy
 naiveproxy_protocol = s:option(ListValue, "naiveproxy_protocol", translate("Protocol"))
 naiveproxy_protocol:value("https", translate("HTTPS"))
 naiveproxy_protocol:value("quic", translate("QUIC"))
@@ -427,7 +427,7 @@ flow:value("xtls-rprx-splice")
 flow:value("xtls-rprx-splice-udp443")
 flow:depends("xtls", "1")
 
--- [[ TLS部分 ]] --
+-- [[ TLS ]] --
 tls_sessionTicket = s:option(Flag, "tls_sessionTicket", translate("Session Ticket"))
 tls_sessionTicket.default = "0"
 tls_sessionTicket:depends({ type = "Trojan", tls = "1" })
@@ -505,23 +505,23 @@ ss_transport:value("h2+ws", "HTTP/2 & WebSocket")
 ss_transport:depends({ type = "Xray", protocol = "shadowsocks" })
 ]]--
 
--- [[ TCP部分 ]]--
+-- [[ TCP ]]--
 
--- TCP伪装
+-- TCP
 tcp_guise = s:option(ListValue, "tcp_guise", translate("Camouflage Type"))
 tcp_guise:value("none", "none")
 tcp_guise:value("http", "http")
 tcp_guise:depends("transport", "tcp")
 
--- HTTP域名
+-- HTTP
 tcp_guise_http_host = s:option(DynamicList, "tcp_guise_http_host", translate("HTTP Host"))
 tcp_guise_http_host:depends("tcp_guise", "http")
 
--- HTTP路径
+-- HTTP
 tcp_guise_http_path = s:option(DynamicList, "tcp_guise_http_path", translate("HTTP Path"))
 tcp_guise_http_path:depends("tcp_guise", "http")
 
--- [[ mKCP部分 ]]--
+-- [[ mKCP ]]--
 
 mkcp_guise = s:option(ListValue, "mkcp_guise", translate("Camouflage Type"), translate('<br />none: default, no masquerade, data sent is packets with no characteristics.<br />srtp: disguised as an SRTP packet, it will be recognized as video call data (such as FaceTime).<br />utp: packets disguised as uTP will be recognized as bittorrent downloaded data.<br />wechat-video: packets disguised as WeChat video calls.<br />dtls: disguised as DTLS 1.2 packet.<br />wireguard: disguised as a WireGuard packet. (not really WireGuard protocol)'))
 for a, t in ipairs(header_type_list) do mkcp_guise:value(t) end
@@ -557,7 +557,7 @@ mkcp_writeBufferSize:depends("transport", "mkcp")
 mkcp_seed = s:option(Value, "mkcp_seed", translate("KCP Seed"))
 mkcp_seed:depends("transport", "mkcp")
 
--- [[ WebSocket部分 ]]--
+-- [[ WebSocket ]]--
 ws_host = s:option(Value, "ws_host", translate("WebSocket Host"))
 ws_host:depends("transport", "ws")
 ws_host:depends("ss_transport", "ws")
@@ -570,7 +570,7 @@ ws_path:depends("ss_transport", "ws")
 ws_path:depends("trojan_transport", "h2+ws")
 ws_path:depends("trojan_transport", "ws")
 
--- [[ HTTP/2部分 ]]--
+-- [[ HTTP/2 ]]--
 h2_host = s:option(Value, "h2_host", translate("HTTP/2 Host"))
 h2_host:depends("transport", "h2")
 h2_host:depends("ss_transport", "h2")
@@ -583,11 +583,11 @@ h2_path:depends("ss_transport", "h2")
 h2_path:depends("trojan_transport", "h2+ws")
 h2_path:depends("trojan_transport", "h2")
 
--- [[ DomainSocket部分 ]]--
+-- [[ DomainSocket ]]--
 ds_path = s:option(Value, "ds_path", "Path", translate("A legal file path. This file must not exist before running."))
 ds_path:depends("transport", "ds")
 
--- [[ QUIC部分 ]]--
+-- [[ QUIC ]]--
 quic_security = s:option(ListValue, "quic_security", translate("Encrypt Method"))
 quic_security:value("none")
 quic_security:value("aes-128-gcm")
@@ -628,7 +628,7 @@ mux_concurrency = s:option(Value, "mux_concurrency", translate("Mux Concurrency"
 mux_concurrency.default = 8
 mux_concurrency:depends("mux", "1")
 
--- [[ 当作为TCP节点时，是否同时开启socks代理 ]]--
+-- [[ When used as a TCP node, whether to enable the socks proxy at the same time ]]--
 --[[
 tcp_socks = s:option(Flag, "tcp_socks", translate("TCP Open Socks"), translate("When using this TCP node, whether to open the socks proxy at the same time"))
 tcp_socks.default = 0
