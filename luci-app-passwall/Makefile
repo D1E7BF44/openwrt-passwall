@@ -94,7 +94,7 @@ define Package/$(PKG_NAME)
   TITLE:=LuCI support for PassWall
   PKGARCH:=all
   DEPENDS:=+libmbedtls +iptables-mod-tproxy +ip +ipset +coreutils +coreutils-base64 +coreutils-nohup +luci-lib-jsonc \
-  +curl +ca-certificates +resolveip +unzip +dnsmasq-full +tcping +libuci-lua \
+  +curl +ca-certificates +resolveip +unzip +dnsmasq-full +tcping +libuci-lua +luci-compat \
   +ipt2socks \
   +ssocks \
   +microsocks \
@@ -113,12 +113,13 @@ define Package/$(PKG_NAME)
   +PACKAGE_$(PKG_NAME)_INCLUDE_Brook:brook \
   +PACKAGE_$(PKG_NAME)_INCLUDE_kcptun:kcptun-client \
   +PACKAGE_$(PKG_NAME)_INCLUDE_haproxy:haproxy \
-#  +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
   +PACKAGE_$(PKG_NAME)_INCLUDE_https_dns_proxy:https-dns-proxy \
   +PACKAGE_$(PKG_NAME)_INCLUDE_dns2socks:dns2socks \
   +PACKAGE_$(PKG_NAME)_INCLUDE_v2ray-plugin:v2ray-plugin \
   +PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs:simple-obfs
 endef
+
+#  +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
 
 define Build/Prepare
 endef
