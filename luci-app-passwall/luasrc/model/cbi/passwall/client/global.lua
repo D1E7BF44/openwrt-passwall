@@ -173,10 +173,8 @@ o:value("default", translate("Default"))
 if has_xray then
     o:value("xray_doh", "Xray DNS(DoH)")
 end
-o:value("223.5.5.5", "223.5.5.5 (" .. translate("Ali") .. "DNS)")
-o:value("114.114.114.114", "114.114.114.114 (114DNS)")
-o:value("119.29.29.29", "119.29.29.29 (DNSPOD DNS)")
-o:value("180.76.76.76", "180.76.76.76 (" .. translate("Baidu") .. "DNS)")
+o:value("1.1.1.1", "1.1.1.1 (CloudFlare DNS)")
+o:value("9.9.9.9", "9.9.9.9 (Quad9 DNS)")
 
 ---- DoH
 o = s:taboption("DNS", Value, "up_china_dns_doh", translate("DoH request address"))
@@ -240,7 +238,7 @@ o:value("https://doh.opendns.com/dns-query,208.67.222.222", "OpenDNS")
 o:value("https://dns.google/dns-query,8.8.8.8", "Google")
 o:value("https://doh.libredns.gr/dns-query,116.202.176.26", "LibreDNS")
 o:value("https://doh.libredns.gr/ads,116.202.176.26", "LibreDNS (No Ads)")
-o:value("https://dns.quad9.net/dns-query,9.9.9.9", "Quad9-Recommended")
+o:value("https://dns.quad9.net/dns-query,9.9.9.9", "Quad9")
 o.default = "https://dns.google/dns-query,8.8.8.8"
 o.validate = doh_validate
 o:depends({dns_mode = "xray_doh"})
@@ -248,11 +246,11 @@ o:depends({dns_mode = "xray_doh"})
 ---- DNS Forward
 o = s:taboption("DNS", Value, "dns_forward", translate("Remote DNS"))
 --o.description = translate("IP:Port mode acceptable, multi value split with english comma.") .. " " .. translate("If you use dns2socks, only the first one is valid.")
-o.default = "8.8.8.8"
-o:value("8.8.8.8", "8.8.8.8 (Google DNS)")
-o:value("8.8.4.4", "8.8.4.4 (Google DNS)")
-o:value("208.67.222.222", "208.67.222.222 (Open DNS)")
-o:value("208.67.220.220", "208.67.220.220 (Open DNS)")
+o.default = "1.1.1.1"
+o:value("1.1.1.1", "1.1.1.1 (Cloudflare DNS)")
+o:value("9.9.9.9", "9.9.9.9 (Quad9 DNS)")
+o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
+o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
 o:depends({dns_mode = "dns2socks"})
 o:depends({dns_mode = "pdnsd"})
 o:depends({dns_mode = "udp"})
