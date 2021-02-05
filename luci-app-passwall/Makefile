@@ -82,7 +82,7 @@ define Package/$(PKG_NAME)
   TITLE:=LuCI support for PassWall
   PKGARCH:=all
   DEPENDS:=+libmbedtls +iptables-mod-tproxy +ip +ipset +coreutils +coreutils-base64 +coreutils-nohup +luci-lib-jsonc \
-  +curl +ca-certificates +resolveip +unzip +dnsmasq-full +tcping +libuci-lua \
+  +curl +ca-certificates +resolveip +unzip +dnsmasq-full +tcping +libuci-lua +luci-compat \
   +ipt2socks \
   +microsocks \
   +pdnsd-alt \
