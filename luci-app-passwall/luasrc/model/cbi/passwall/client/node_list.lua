@@ -51,7 +51,7 @@ if nodes_display:find("show_group") then
 end
 
 s.sortable = true
--- 简洁模式
+--
 if nodes_display:find("compact_display_nodes") then
     if show_group then show_group.width = "25%" end
     o = s:option(DummyValue, "remarks", translate("Remarks"))
