@@ -44,7 +44,7 @@
 			var id = onclick_str.substring(onclick_str.lastIndexOf('/') + 1, onclick_str.length - 1);
 			var td = edit_btn[i].parentNode;
 			var new_div = "";
-			//添加"日志"按钮
+			//
 			new_div += '<input class="cbi-button cbi-button-add" type="button" value="<%:Log%>" onclick="get_log(\'' + id + '\')"/>&nbsp;&nbsp;';
 			td.innerHTML = new_div + td.innerHTML;
 		}
