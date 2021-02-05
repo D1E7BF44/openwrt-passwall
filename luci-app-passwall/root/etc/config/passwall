@@ -35,7 +35,7 @@ config global_forwarding
 	option proxy_ipv6 '0'
 	
 config global_other
-	option status 'big_icon show_check_port show_ipify'
+	option status 'big_icon show_check_port show_ip-api'
 	option nodes_ping 'auto_ping tcping'
 	option nodes_display 'compact_display_nodes show_add_mode'
 
