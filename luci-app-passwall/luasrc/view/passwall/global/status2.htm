@@ -98,7 +98,16 @@ local status = api.uci_get_type("global_other", "status", "")
 				<%:Collecting data...%>
 			</div>
 		</div>
-		
+
+		<div class="cbi-value">
+			<label class="cbi-value-title">
+				<%:ipify%>
+			</label>
+			<div class="cbi-value-field">
+				<input type="button" class="cbi-button cbi-input-apply" value="<%:Check%>" onclick="return check_connect(this, 'ipify', 'api.ipify.org')" />
+				<font id="_ipify"></font>
+			</div>
+		</div>
 		<div class="cbi-value">
 			<label class="cbi-value-title">
 				<%:Google Connection%>
@@ -129,11 +138,11 @@ local status = api.uci_get_type("global_other", "status", "")
 			</div>
 		</div>
 		<% end %>
-		<% if status:find("show_ipify") then %>
+		<% if status:find("show_ip-api") then %>
 		<div class="cbi-value">
 			<label class="cbi-value-title"></label>
 			<div class="cbi-value-field">
-				<input type="button" class="cbi-button cbi-input-reload" value="ipify.org" onclick="javascript:window.open('http://api.ipify.org','target');" />
+				<input type="button" class="cbi-button cbi-input-reload" value="ip-api.com" onclick="javascript:window.open('http://ip-api.com','target');" />
 			</div>
 		</div>
 		<% end %>
