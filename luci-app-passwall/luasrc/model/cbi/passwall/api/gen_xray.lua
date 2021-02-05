@@ -83,7 +83,7 @@ function gen_outbound(node, tag, relay_port)
                 enabled = (node.mux == "1") and true or false,
                 concurrency = (node.mux_concurrency) and tonumber(node.mux_concurrency) or 8
             } or nil,
-            -- 底层传输配置
+            -- 
             streamSettings = (node.protocol == "vmess" or node.protocol == "vless" or node.protocol == "socks" or node.protocol == "shadowsocks" or node.protocol == "trojan") and {
                 network = node.transport,
                 security = node.stream_security,
@@ -308,7 +308,7 @@ if node_section then
         if outbound then table.insert(outbounds, outbound) end
     end
 
-    -- 额外传出连接
+    -- 
     table.insert(outbounds, {protocol = "freedom", tag = "direct", settings = {keep = ""}})
 
     local xray = {
@@ -316,11 +316,8 @@ if node_section then
             -- error = string.format("/var/etc/passwall/%s.log", node[".name"]),
             loglevel = loglevel
         },
-        -- 传入连接
         inbounds = inbounds,
-        -- 传出连接
         outbounds = outbounds,
-        -- 路由
         routing = routing
     }
     print(json.stringify(xray, 1))
