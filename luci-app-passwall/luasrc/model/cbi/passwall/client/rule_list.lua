@@ -1,6 +1,5 @@
 local fs = require "nixio.fs"
-local api = require "luci.model.cbi.passwall.api.api"
-local appname = api.appname
+local appname = "passwall"
 
 m = Map(appname)
 m.apply_on_parse=true
@@ -13,6 +12,8 @@ s.anonymous = true
 
 s:tab("direct_list", translate("Direct List"))
 s:tab("proxy_list", translate("Proxy List"))
+s:tab("proxy_list2", translate("Proxy List") .. " 2")
+s:tab("proxy_list3", translate("Proxy List") .. " 3")
 
 ---- Direct Hosts
 local direct_host = string.format("/usr/share/%s/rules/direct_host", appname)

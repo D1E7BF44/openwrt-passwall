@@ -1,5 +1,5 @@
-local api = require "luci.model.cbi.passwall.api.api"
-local appname = api.appname
+local d = require "luci.dispatcher"
+local appname = "passwall"
 
 m = Map(appname)
 -- [[ Rule Settings ]]--
@@ -13,19 +13,20 @@ o.rmempty = false
 
 ---- gfwlist URL
 o = s:option(Value, "gfwlist_url", translate("GFW domains(gfwlist) Update URL"))
+o:value("https://cdn.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt", translate("Loukky/gfwlist-by-loukky"))
 o:value("https://cdn.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt", translate("gfwlist/gfwlist"))
 o.default = "https://cdn.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt"
 
 ----chnroute  URL
 o = s:option(Value, "chnroute_url", translate("China IPs(chnroute) Update URL"))
-o:value("https://example.com", translate("Clang.CN"))
-o:value("https://example.com", translate("Clang.CN.CIDR"))
-o.default = "https://example.com"
+o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang.CN"))
+o:value("https://ispip.clang.cn/all_cn_cidr.txt", translate("Clang.CN.CIDR"))
+o.default = "https://ispip.clang.cn/all_cn.txt"
 
 ----chnroute6 URL
 o = s:option(Value, "chnroute6_url", translate("China IPv6s(chnroute6) Update URL"))
-o:value("https://example.com", translate("Clang.CN.IPv6"))
-o.default = "https://example.com"
+o:value("https://ispip.clang.cn/all_cn_ipv6.txt", translate("Clang.CN.IPv6"))
+o.default = "https://ispip.clang.cn/all_cn_ipv6.txt"
 
 s:append(Template(appname .. "/rule/rule_version"))
 
@@ -48,11 +49,11 @@ for e = 0, 23 do o:value(e, e .. translate("oclock")) end
 o.default = 0
 o:depends("auto_update", 1)
 
-s = m:section(TypedSection, "shunt_rules", "Xray" .. translate("Shunt") .. translate("Rule"))
+s = m:section(TypedSection, "shunt_rules", "Xray/V2ray" .. translate("Shunt") .. translate("Rule"))
 s.template = "cbi/tblsection"
 s.anonymous = false
 s.addremove = true
-s.extedit = api.url("shunt_rules", "%s")
+s.extedit = d.build_url("admin", "services", appname, "shunt_rules", "%s")
 function s.create(e, t)
     TypedSection.create(e, t)
     luci.http.redirect(e.extedit:format(t))

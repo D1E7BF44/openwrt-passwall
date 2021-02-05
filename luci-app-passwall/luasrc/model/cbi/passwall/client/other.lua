@@ -1,5 +1,5 @@
-local api = require "luci.model.cbi.passwall.api.api"
-local appname = api.appname
+local uci = require"luci.model.uci".cursor()
+local appname = "passwall"
 
 m = Map(appname)
 
@@ -7,6 +7,12 @@ m = Map(appname)
 s = m:section(TypedSection, "global_delay", translate("Delay Settings"))
 s.anonymous = true
 s.addremove = false
+
+---- Delay Start
+o = s:option(Value, "start_delay", translate("Delay Start"),
+             translate("Units:seconds"))
+o.default = "1"
+o.rmempty = true
 
 ---- Open and close Daemon
 o = s:option(Flag, "start_daemon", translate("Open and close Daemon"))
@@ -77,6 +83,16 @@ o.default = "1:65535"
 o:value("1:65535", translate("All"))
 o:value("53", "DNS")
 
+---- Multi SS/SSR Process Option
+o = s:option(Value, "process", translate("Multi Process Option"))
+o.default = "0"
+o.rmempty = false
+o:value("0", translate("Auto"))
+o:value("1", translate("1 Process"))
+o:value("2", "2 " .. translate("Process"))
+o:value("3", "3 " .. translate("Process"))
+o:value("4", "4 " .. translate("Process"))
+
 --[[
 ---- Proxy IPv6
 o = s:option(Flag, "proxy_ipv6", translate("Proxy IPv6"),
@@ -112,6 +128,6 @@ s.addremove = false
 o = s:option(MultiValue, "status", translate("Status info"))
 o:value("big_icon", translate("Big icon"))
 o:value("show_check_port", translate("Show node check"))
-o:value("show_IPIFY", translate("Show Show IPIFY"))
+o:value("show_ipify", translate("Show Show IPIFY"))
 
 return m

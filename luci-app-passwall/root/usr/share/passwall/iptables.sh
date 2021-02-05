@@ -3,10 +3,10 @@
 IPSET_LANIPLIST="laniplist"
 IPSET_VPSIPLIST="vpsiplist"
 IPSET_SHUNTLIST="shuntlist"
-IPSET_GFW="gfwlist"
+#IPSET_GFW="gfwlist"
 #IPSET_GFW6="gfwlist6"
-IPSET_CHN="chnroute"
-IPSET_CHN6="chnroute6"
+#IPSET_CHN="chnroute"
+#IPSET_CHN6="chnroute6"
 IPSET_BLACKLIST="blacklist"
 IPSET_BLACKLIST2="blacklist2"
 IPSET_BLACKLIST3="blacklist3"
@@ -35,8 +35,7 @@ dst() {
 }
 
 comment() {
-	local name=$(echo $1 | sed 's/ /_/g')
-	echo "-m comment --comment '$name'"
+	echo "-m comment --comment '$1'"
 }
 
 RULE_LAST_INDEX() {
@@ -82,19 +81,19 @@ get_redirect_ipt() {
 get_action_chain_name() {
 	case "$1" in
 	disable)
-		echo "No proxy"
+		echo "Propxy off"
 		;;
 	global)
 		echo "Global proxy"
 		;;
 	gfwlist)
-		echo "gfwlist"
+		echo "Firewall list"
 		;;
 	chnroute)
-		echo "chnroute"
+		echo "Outside China list"
 		;;
 	returnhome)
-		echo "chn list"
+		echo "China list"
 		;;
 	esac
 }
@@ -139,7 +138,7 @@ load_acl() {
 			
 			#echolog "Access control: ${item}..."
 			[ -n "$ip" ] && msg="IP：$ip，"
-			[ -n "$mac" ] && msg="${msg:+${msg} and }MAC：$mac，"
+			[ -n "$mac" ] && msg="${msg:+${msg}和}MAC：$mac，"
 			ipt_tmp=$ipt_n
 			[ "$tcp_proxy_mode" != "disable" ] && {
 				[ "$TCP_NODE" != "nil" ] && {
@@ -149,14 +148,14 @@ load_acl() {
 					#[ "$TCP_NODE_TYPE" == "trojan-go" ] && is_tproxy=1
 					msg2="${msg}Use TCP node [$(get_action_chain_name $tcp_proxy_mode)]"
 					if [ -n "${is_tproxy}" ]; then
-						msg2="${msg2}(TPROXY:${tcp_port}) proxy"
+						msg2="${msg2}(TPROXY:${tcp_port}) PROXY"
 						ipt_tmp=$ipt_m && is_tproxy="TPROXY"
 					else
-						msg2="${msg2}(REDIRECT:${tcp_port}) proxy"
+						msg2="${msg2}(REDIRECT:${tcp_port}) PROXY"
 					fi
 					[ "$tcp_no_redir_ports" != "disable" ] && {
 						$ipt_tmp -A PSW $(comment "$remarks") $(factor $ip "-s") $(factor $mac "-m mac --mac-source") -p tcp -m multiport --dport $tcp_no_redir_ports -j RETURN
-						msg2="${msg2}[$?] Except ${tcp_no_redir_ports}"
+						msg2="${msg2}[$?]Except for ${tcp_no_redir_ports}"
 					}
 					msg2="${msg2} all ports"
 					$ipt_tmp -A PSW $(comment "$remarks") -p tcp $(factor $ip "-s") $(factor $mac "-m mac --mac-source") $(factor $tcp_redir_ports "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $(REDIRECT $tcp_port $is_tproxy)
@@ -174,9 +173,9 @@ load_acl() {
 					msg2="${msg2}(TPROXY:${udp_port}) proxy"
 					[ "$udp_no_redir_ports" != "disable" ] && {
 						$ipt_m -A PSW $(comment "$remarks") $(factor $ip "-s") $(factor $mac "-m mac --mac-source") -p udp -m multiport --dport $udp_no_redir_ports -j RETURN
-						msg2="${msg2}[$?] Except ${udp_no_redir_ports}"
+						msg2="${msg2}[$?]Except for ${udp_no_redir_ports}"
 					}
-					msg2="${msg2} all ports"
+					msg2="${msg2}All ports"
 					$ipt_m -A PSW $(comment "$remarks") -p udp $(factor $ip "-s") $(factor $mac "-m mac --mac-source") $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $(REDIRECT $udp_port TPROXY)
 					$ipt_m -A PSW $(comment "$remarks") -p udp $(factor $ip "-s") $(factor $mac "-m mac --mac-source") $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_BLACKLIST) $(REDIRECT $udp_port TPROXY)
 					$ipt_m -A PSW $(comment "$remarks") -p udp $(factor $ip "-s") $(factor $mac "-m mac --mac-source") $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(get_redirect_ipt $udp_proxy_mode $udp_port TPROXY)
@@ -187,7 +186,7 @@ load_acl() {
 		done
 	}
 
-	#  Load TCP default proxy mode
+	# Load TCP default proxy mode
 	local ipt_tmp=$ipt_n
 	local is_tproxy msg
 	unset is_tproxy msg
@@ -200,15 +199,15 @@ load_acl() {
 			local TCP_NODE_TYPE=$(echo $(config_n_get $TCP_NODE type) | tr 'A-Z' 'a-z')
 			[ "$TCP_NODE_TYPE" == "brook" ] && [ "$(config_n_get $TCP_NODE protocol client)" == "client" ] && is_tproxy=1
 			#[ "$TCP_NODE_TYPE" == "trojan-go" ] && is_tproxy=1
-				msg="TCP default proxy: use TCP node [$(get_action_chain_name $TCP_PROXY_MODE)]"
+				msg="TCP default proxy: use TCP node[$(get_action_chain_name $TCP_PROXY_MODE)]"
 			if [ -n "$is_tproxy" ]; then
-				ipt_tmp=$ipt_m && is_tproxy="TPROXY"
-				msg="${msg}(TPROXY:${TCP_REDIR_PORT}) proxy"
+				ipt_tmp=$ipt_m && is_tproxy="T"
+				msg="${msg}(TPROXY:${TCP_REDIR_PORT}) PROXY"
 			else
-				msg="${msg}(REDIRECT:${TCP_REDIR_PORT}) proxy"
+				msg="${msg}(REDIRECT:${TCP_REDIR_PORT}) PROXY"
 			fi
-			[ "$TCP_NO_REDIR_PORTS" != "disable" ] && msg="${msg} except ${TCP_NO_REDIR_PORTS}"
-			msg="${msg} all ports"
+			[ "$TCP_NO_REDIR_PORTS" != "disable" ] && msg="${msg}Except for ${TCP_NO_REDIR_PORTS}"
+			msg="${msg}All ports"
 			$ipt_tmp -A PSW $(comment "default") -p tcp $(factor $TCP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $(REDIRECT $TCP_REDIR_PORT $is_tproxy)
 			$ipt_tmp -A PSW $(comment "default") -p tcp $(factor $TCP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_BLACKLIST) $(REDIRECT $TCP_REDIR_PORT $is_tproxy)
 			$ipt_tmp -A PSW $(comment "default") -p tcp $(factor $TCP_REDIR_PORTS "-m multiport --dport") $(get_redirect_ipt $TCP_PROXY_MODE $TCP_REDIR_PORT $is_tproxy)
@@ -218,12 +217,12 @@ load_acl() {
 	$ipt_n -A PSW $(comment "default") -p tcp -j RETURN
 	$ipt_m -A PSW $(comment "default") -p tcp -j RETURN
 
-	#  Load UDP default proxy mode
+	# Load UDP default proxy mode
 	if [ "$UDP_PROXY_MODE" != "disable" ]; then
 		[ "$UDP_NO_REDIR_PORTS" != "disable" ] && $ipt_m -A PSW $(comment "default") -p udp -m multiport --dport $UDP_NO_REDIR_PORTS -j RETURN
 		[ "$UDP_NODE" != "nil" ] && {
-			msg="UDP default proxy: use UDP node [$(get_action_chain_name $UDP_PROXY_MODE)](TPROXY:${UDP_REDIR_PORT}) proxy"
-			[ "$UDP_NO_REDIR_PORTS" != "disable" ] && msg="${msg} except ${UDP_NO_REDIR_PORTS}"
+			msg="UDP default proxy: use UDP node [$(get_action_chain_name $UDP_PROXY_MODE)](TPROXY:${UDP_REDIR_PORT})proxy"
+			[ "$UDP_NO_REDIR_PORTS" != "disable" ] && msg="${msg}Except for ${TCP_NO_REDIR_PORTS}"
 			msg="${msg}All ports"
 			$ipt_m -A PSW $(comment "default") -p udp $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $(REDIRECT $UDP_REDIR_PORT TPROXY)
 			$ipt_m -A PSW $(comment "default") -p udp $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_BLACKLIST) $(REDIRECT $UDP_REDIR_PORT TPROXY)
@@ -234,18 +233,10 @@ load_acl() {
 	$ipt_m -A PSW $(comment "default") -p udp -j RETURN
 }
 
-filter_haproxy() {
-	uci show $CONFIG | grep "@haproxy_config" | grep "lbss=" | cut -d "'" -f 2 | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | awk -F ":" '{print $1}' | sed -e "/^$/d" | sed -e "s/^/add $IPSET_VPSIPLIST &/g" | awk '{print $0} END{print "COMMIT"}' | ipset -! -R
-	for host in $(uci show $CONFIG | grep "@haproxy_config" | grep "lbss=" | cut -d "'" -f 2 | grep -v -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | awk -F ":" '{print $1}'); do
-		ipset -q add $IPSET_VPSIPLIST $(get_host_ip ipv4 $host 1)
-	done
-	echolog "Add the load balancing node to the ipset[$IPSET_VPSIPLIST] direct connection is completed"
-}
-
 filter_vpsip() {
 	uci show $CONFIG | grep ".address=" | cut -d "'" -f 2 | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sed -e "/^$/d" | sed -e "s/^/add $IPSET_VPSIPLIST &/g" | awk '{print $0} END{print "COMMIT"}' | ipset -! -R
 	#uci show $CONFIG | grep ".address=" | cut -d "'" -f 2 | grep -E "([[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){0,7}::[a-f0-9]{0,4}(:[a-f0-9]{1,4}){0,7}])" | sed -e "/^$/d" | sed -e "s/^/add $IPSET_VPSIP6LIST &/g" | awk '{print $0} END{print "COMMIT"}' | ipset -! -R
-	echolog "Add all nodes to ipset[$IPSET_VPSIPLIST] direct connection is completed"
+	echolog "Filter the direct IP addresses of all nodes to complete [$?]"
 }
 
 filter_node() {
@@ -277,7 +268,7 @@ filter_node() {
 				msg="REDIRECT"
 			fi
 		else
-			echolog "  - The node configuration is not normal, skip it"
+			echolog "  - The node configuration is not normal, skip"
 			return 0
 		fi
 
@@ -292,49 +283,42 @@ filter_node() {
 				msg2="Route by rule(${msg})"
 				[ "$_ipt" == "$ipt_m" -o "$_ipt" == "$ip6t_m" ] || {
 					dst_rule=$(REDIRECT $_port)
-					msg2="Matryoshka use (${msg}:${port} -> ${_port})"
+					msg2="Matryoshka use(${msg}:${port} -> ${_port})"
 				}
 				[ -n "$_proxy" ] && [ "$_proxy" == "1" ] && [ -n "$_port" ] || {
 					ADD_INDEX=$(RULE_LAST_INDEX "$_ipt" PSW_OUT_PUT "$IPSET_VPSIPLIST" $FORCE_INDEX)
 					dst_rule=" -j RETURN"
-					msg2="Direct"
+					msg2="Direct agent"
 				}
 				$_ipt -I PSW_OUTPUT $ADD_INDEX $(comment "${address}:${port}") -p $stream -d $address --dport $port $dst_rule 2>/dev/null
 			#else
 			#	msg2="Configured nodes,"
 			fi
 		done
-		msg="[$?]$(echo ${2} | tr 'a-z' 'A-Z')${msg2}Use chain ${ADD_INDEX}, node（${type}）：${address}:${port}"
+		msg="[$?]$(echo ${2} | tr 'a-z' 'A-Z')${msg2}Use chain ${ADD_INDEX}, node (${type}）：${address}:${port}"
 		echolog "  - ${msg}"
 	}
 	
 	local proxy_protocol=$(config_n_get $proxy_node protocol)
 	local proxy_type=$(echo $(config_n_get $proxy_node type nil) | tr 'A-Z' 'a-z')
-	[ "$proxy_type" == "nil" ] && echolog " - The node configuration is abnormal, skip it：${proxy_node}" && return 0
+	[ "$proxy_type" == "nil" ] && echolog "  - The node configuration is abnormal, skip it! :${proxy_node}" && return 0
 	if [ "$proxy_protocol" == "_balancing" ]; then
-		#echolog "  - Multi-node load balancing (${proxy_type}）..."
+		#echolog "  - 多Node load balancing (${proxy_type}）..."
 		proxy_node=$(config_n_get $proxy_node balancing_node)
 		for _node in $proxy_node; do
 			filter_rules "$_node" "$stream"
 		done
 	elif [ "$proxy_protocol" == "_shunt" ]; then
-		#echolog "  - Diversion according to the requested destination address (${proxy_type}）..."
+		#echolog "  - 按请求目的地址分流（${proxy_type}）..."
 		local default_node=$(config_n_get $proxy_node default_node nil)
-		local default_proxy=$(config_n_get $proxy_node default_proxy 0)
-		if [ "$default_proxy" == 1 ]; then
-			local main_node=$(config_n_get $proxy_node main_node nil)
-			filter_rules $main_node $stream
-		else
-			filter_rules $default_node $stream
-		fi
+		filter_rules $default_node $stream
 :<<!
 		local default_node_address=$(get_host_ip ipv4 $(config_n_get $default_node address) 1)
 		local default_node_port=$(config_n_get $default_node port)
 		
 		local shunt_ids=$(uci show $CONFIG | grep "=shunt_rules" | awk -F '.' '{print $2}' | awk -F '=' '{print $1}')
 		for shunt_id in $shunt_ids; do
-			#local shunt_proxy=$(config_n_get $proxy_node "${shunt_id}_proxy" 0)
-			local shunt_proxy=0
+			local shunt_proxy=$(config_n_get $proxy_node "${shunt_id}_proxy" 0)
 			local shunt_node=$(config_n_get $proxy_node "${shunt_id}" nil)
 			[ "$shunt_node" != "nil" ] && {
 				[ "$shunt_proxy" == 1 ] && {
@@ -349,14 +333,14 @@ filter_node() {
 		done
 !
 	else
-		#echolog "  - Normal node（${proxy_type}）..."
+		#echolog "  -Normal node (${proxy_type})..."
 		filter_rules "$proxy_node" "$stream"
 	fi
 }
 
 dns_hijack() {
 	$ipt_n -I PSW -p udp --dport 53 -j REDIRECT --to-ports 53
-	echolog "Forcibly forward the request of the local DNS port UDP/53[$?]"
+	echolog "Force to forward the request of the local DNS port UDP/53 [$?]"
 }
 
 add_firewall_rule() {
@@ -392,12 +376,12 @@ add_firewall_rule() {
 		return 1
 	}
 	
-	# Ignore special IP segments
+	# 忽略特殊IP段
 	local lan_ifname lan_ip
 	lan_ifname=$(uci -q -p /var/state get network.lan.ifname)
 	[ -n "$lan_ifname" ] && {
 		lan_ip=$(ip address show $lan_ifname | grep -w "inet" | awk '{print $2}')
-		echolog "Local network segment mutual access and direct connection:${lan_ip}"
+		echolog "Local network segment mutual access and direct connection: ${lan_ip}"
 		[ -n "$lan_ip" ] && ipset -! add $IPSET_LANIPLIST $lan_ip >/dev/null 2>&1 &
 	}
 
@@ -406,13 +390,12 @@ add_firewall_rule() {
 		echolog "Handling ISP DNS exceptions..."
 		for ispip in $ISP_DNS; do
 			ipset -! add $IPSET_WHITELIST $ispip >/dev/null 2>&1 &
-			echolog "  - Append to the whitelist:${ispip}"
+			echolog "  - Append to the whitelist: ${ispip}"
 		done
 	}
 	
-	#  Filter all node IP
-	filter_vpsip > /dev/null 2>&1 &
-	filter_haproxy > /dev/null 2>&1 &
+	# Filter all node IP
+	filter_vpsip
 	
 	$ipt_n -N PSW
 	$ipt_n -A PSW $(dst $IPSET_LANIPLIST) -j RETURN
@@ -445,7 +428,7 @@ add_firewall_rule() {
 		local blist_r=$(REDIRECT $TCP_REDIR_PORT)
 		local p_r=$(get_redirect_ipt $LOCALHOST_TCP_PROXY_MODE $TCP_REDIR_PORT)
 		TCP_NODE_TYPE=$(echo $(config_n_get $TCP_NODE type) | tr 'A-Z' 'a-z')
-		echolog "Load router's own proxy TCP ..."
+		echolog "Load the router's own TCP proxy..."
 		if [ "$TCP_NODE_TYPE" == "brook" ] && [ "$(config_n_get $TCP_NODE protocol client)" == "client" ]; then
 			echolog "  - Enable TPROXY mode"
 			ipt_tmp=$ipt_m
@@ -456,9 +439,9 @@ add_firewall_rule() {
 		fi
 		_proxy_tcp_access() {
 			[ -n "${2}" ] || return 0
-			ipset -q test $IPSET_LANIPLIST ${2}
+			ipset test $IPSET_LANIPLIST ${2} 2>/dev/null
 			[ $? -eq 0 ] && {
-				echolog "  - The upstream DNS server ${2} is already in the list of direct access. It is not mandatory to forward access to the server's TCP/${3} port to the TCP proxy"
+				echolog "  -The upstream DNS server ${2} is already in the list of direct access. It is not mandatory to forward access to the server's TCP/${3} port to the TCP proxy"
 				return 0
 			}
 			local ADD_INDEX=$FORCE_INDEX
@@ -470,7 +453,7 @@ add_firewall_rule() {
 		$ipt_tmp -A OUTPUT -p tcp -j PSW_OUTPUT
 		[ "$TCP_NO_REDIR_PORTS" != "disable" ] && {
 			$ipt_tmp -A PSW_OUTPUT -p tcp -m multiport --dport $TCP_NO_REDIR_PORTS -j RETURN
-			echolog "  - [$?]Do not proxy TCP ports: $TCP_NO_REDIR_PORTS"
+			echolog "  - [$?]Do not proxy TCP ports:$TCP_NO_REDIR_PORTS"
 		}
 		$ipt_tmp -A PSW_OUTPUT -p tcp $(factor $TCP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $blist_r
 		$ipt_tmp -A PSW_OUTPUT -p tcp $(factor $TCP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_BLACKLIST) $blist_r
@@ -485,7 +468,7 @@ add_firewall_rule() {
 	fi
 	PR_INDEX=$((PR_INDEX + 1))
 	$ipt_n -I PREROUTING $PR_INDEX -p tcp -j PSW
-	echolog "Use linked list PREROUTING to arrange index${PR_INDEX}[$?]"
+	echolog "Use linked list PREROUTING to arrange index ${PR_INDEX}[$?]"
 	
 	$ip6t_n -N PSW
 	$ip6t_n -A PREROUTING -j PSW
@@ -514,69 +497,67 @@ add_firewall_rule() {
 		echolog "$msg"
 	fi
 
-	# Filter Socks node
-	[ "$SOCKS_ENABLED" = "1" ] && {
-		local ids=$(uci show $CONFIG | grep "=socks" | awk -F '.' '{print $2}' | awk -F '=' '{print $1}')
-		echolog "Analyze the nodes used by the Socks service..."
-		local id enabled node port msg num
-		for id in $ids; do
-			enabled=$(config_n_get $id enabled 0)
-			[ "$enabled" == "1" ] || continue
-			node=$(config_n_get $id node nil)
-			port=$(config_n_get $id port 0)
-			msg="Socks service [:${port}]"
-			if [ "$node" == "nil" ] || [ "$port" == "0" ]; then
-				msg="${msg} Not configured completely, skip"
-			elif [ "$(echo $node | grep ^tcp)" ]; then
-				eval "node=\${TCP_NODE}"
-				msg="${msg} Use the same node as the TCP proxy to automatically switch ${num}, postpone processing"
-			else
-				filter_node $node TCP > /dev/null 2>&1 &
-				filter_node $node UDP > /dev/null 2>&1 &
-			fi
-			echolog "  - ${msg}"
-		done
-	}
+	#Filter Socks node
+	local ids=$(uci show $CONFIG | grep "=socks" | awk -F '.' '{print $2}' | awk -F '=' '{print $1}')
+	echolog "Analyze the nodes used by the Socks service..."
+	local id enabled node port msg num
+	for id in $ids; do
+		enabled=$(config_n_get $id enabled 0)
+		[ "$enabled" == "1" ] || continue
+		node=$(config_n_get $id node nil)
+		port=$(config_n_get $id port 0)
+		msg="SocksService [:${port}]"
+		if [ "$node" == "nil" ] || [ "$port" == "0" ]; then
+			msg="${msg}Not configured completely, skip "
+		elif [ "$(echo $node | grep ^tcp)" ]; then
+			eval "node=\${TCP_NODE}"
+			msg="${msg}Use the same node as the TCP proxy to automatically switch ${num}, postpone processing"
+		else
+			filter_node $node TCP
+			filter_node $node UDP
+		fi
+		echolog "  - ${msg}"
+	done
 
-	# Handling of shunts or dolls for rotating nodes
+	#Handling of shunts or dolls for rotating nodes
 	local node port stream switch
 	for stream in TCP UDP; do
 		eval "node=\${${stream}_NODE}"
 		eval "port=\${${stream}_REDIR_PORT}"
-		echolog "Analyze $stream proxy automatic switch..."
+		echolog "Analyze the $stream proxy switch automatically..."
 		[ "$node" == "tcp" ] && [ "$stream" == "UDP" ] && {
 			eval "node=\${TCP_NODE}"
 			eval "port=\${TCP_REDIR_PORT}"
 			echolog "  - Configuration using TCP proxy"
 		}
 		if [ "$node" != "nil" ]; then
-			filter_node $node $stream $port > /dev/null 2>&1 &
+			filter_node $node $stream $port
 		else
 			echolog "  - Ignore invalid $stream proxy switch automatically"
 		fi
 	done
 	
-	# Load router's own proxy UDP
+	#Load router's own proxy UDP
 	if [ "$UDP_NODE" != "nil" ]; then
-		echolog "Load router's own UDP proxy..."
+		echolog "Load the router's own UDP proxy..."
 		local UDP_NODE_TYPE=$(echo $(config_n_get $UDP_NODE type) | tr 'A-Z' 'a-z')
 		local ADD_INDEX=$FORCE_INDEX
 		_proxy_udp_access() {
 			[ -n "${2}" ] || return 0
-			ipset -q test $IPSET_LANIPLIST ${2}
+			ipset test $IPSET_LANIPLIST ${2} 2>/dev/null
 			[ $? == 0 ] && {
 				echolog "  - The upstream DNS server ${2} is already in the list of direct access. It is not mandatory to forward access to the server's UDP/${3} port to the UDP proxy"
 				return 0
 			}
 			$ipt_m -I PSW $ADD_INDEX -p udp -d ${2} --dport ${3} $(REDIRECT $UDP_REDIR_PORT TPROXY)
 			$ipt_m -I PSW_OUTPUT $ADD_INDEX -p udp -d ${2} --dport ${3} $(REDIRECT 1 MARK)
-			echolog "  - [$?]Add the upstream DNS server ${2}:${3} to the router's own proxy UDP forwarding chain ${ADD_INDEX}"
+			echolog "  -[$?] Add the upstream DNS server ${2}:${3} to the UDP forwarding chain ${ADD_INDEX} of the router's own proxy"
 		}
 		[ "$use_udp_node_resolve_dns" == 1 ] && hosts_foreach DNS_FORWARD _proxy_udp_access 53
 		$ipt_m -A OUTPUT -p udp -j PSW_OUTPUT
 		[ "$UDP_NO_REDIR_PORTS" != "disable" ] && {
 			$ipt_m -A PSW_OUTPUT -p udp -m multiport --dport $UDP_NO_REDIR_PORTS -j RETURN
-			echolog "  - [$?]Do not proxy UDP port: $UDP_NO_REDIR_PORTS"
+			echolog "  - [$?]Do not proxy UDP ports: $UDP_NO_REDIR_PORTS"
 		}
 		$ipt_m -A PSW_OUTPUT -p udp $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_SHUNTLIST) $(REDIRECT 1 MARK)
 		$ipt_m -A PSW_OUTPUT -p udp $(factor $UDP_REDIR_PORTS "-m multiport --dport") $(dst $IPSET_BLACKLIST) $(REDIRECT 1 MARK)
@@ -585,15 +566,16 @@ add_firewall_rule() {
 	
 	$ipt_m -A PREROUTING -j PSW
 	
+	# Load ACLS
 	load_acl
 	
 	# dns_hijack "force"
 	
-	echolog "The firewall rules are loaded!"
+	echolog "Firewall rules have been loaded!"
 }
 
 del_firewall_rule() {
-	ib_nat_exist=$($ipt_n -nL PREROUTING | grep -c PSW)
+	ib_nat_exist=`$ipt_n -L PREROUTING | grep -c PSW`
 	if [ ! -z "$ib_nat_exist" ];then
 		until [ "$ib_nat_exist" = 0 ]
 	do
@@ -610,7 +592,7 @@ del_firewall_rule() {
 		$ip6t_m -D PREROUTING -j PSW 2>/dev/null
 		$ip6t_m -D OUTPUT -p tcp -j PSW_OUTPUT 2>/dev/null
 		
-		ib_nat_exist=$(expr $ib_nat_exist - 1)
+		ib_nat_exist=`expr $ib_nat_exist - 1`
 	done
 	fi
 	$ipt_n -F PSW 2>/dev/null && $ipt_n -X PSW 2>/dev/null

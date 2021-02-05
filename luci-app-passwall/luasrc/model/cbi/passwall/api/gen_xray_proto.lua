@@ -67,7 +67,7 @@ if server_proto ~= "nil" and server_address ~= "nil" and server_port ~= "nil" th
     if outbound then table.insert(outbounds, outbound) end
 end
 
--- Additional outgoing connection
+-- 额外传出连接
 table.insert(outbounds, {
     protocol = "freedom", tag = "direct", settings = {keep = ""}
 })
@@ -77,8 +77,11 @@ local xray = {
         -- error = string.format("/var/etc/passwall/%s.log", node[".name"]),
         loglevel = "warning"
     },
+    -- 传入连接
     inbounds = inbounds,
+    -- 传出连接
     outbounds = outbounds,
+    -- 路由
     routing = routing
 }
 print(json.stringify(xray, 1))

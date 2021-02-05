@@ -9,7 +9,6 @@ require 'luci.util'
 require 'luci.jsonc'
 require 'luci.sys'
 local api = require "luci.model.cbi.passwall.api.api"
-local has_xray = api.is_finded("xray")
 
 -- these global functions are accessed all the time by the event handler
 -- so caching them is worth the effort
@@ -41,58 +40,77 @@ local log = function(...)
 	end
 end
 
--- Get the current server of each dynamic configuration, you can use get and set, get must get the node table
+-- Get the current server of each dynamic configuration, you can use get and set, get must get the node table 
 local CONFIG = {}
+
 do
 	local function import_config(protocol)
 		local name = string.upper(protocol)
 		local szType = "@global[0]"
 		local option = protocol .. "_node"
 		
-		local node_id = ucic2:get(application, szType, option)
+		local node = ucic2:get(application, szType, option)
+		local currentNode
+		if node then
+			currentNode = ucic2:get_all(application, node)
+		end
 		CONFIG[#CONFIG + 1] = {
 			log = true,
-			remarks = name .. "节点",
-			currentNodeId = node_id,
-			currentNode = node_id and ucic2:get_all(application, node_id) or nil,
-			set = function(o, server)
+			remarks = name .. "node",
+			node = node,
+			currentNode = currentNode,
+			set = function(server)
 				ucic2:set(application, szType, option, server)
-				o.newNodeId = server
 			end
 		}
 	end
 	import_config("tcp")
 	import_config("udp")
 
-	local i = 0
 	ucic2:foreach(application, "socks", function(t)
-		i = i + 1
-		local node_id = t.node
+		local node = t.node
+		local currentNode
+		if node then
+			currentNode = ucic2:get_all(application, node)
+		end
 		CONFIG[#CONFIG + 1] = {
 			log = true,
-			remarks = "Socks Node list[" .. i .. "]",
-			currentNodeId = node_id,
-			currentNode = node_id and ucic2:get_all(application, node_id) or nil,
-			set = function(o, server)
+			remarks = "Socks node" .. t[".name"],
+			currentNode = currentNode,z
+			set = function(server)
 				ucic2:set(application, t[".name"], "node", server)
-				o.newNodeId = server
 			end
 		}
 	end)
+
+	local tcp_main = ucic2:get(application, "@auto_switch[0]", "tcp_main") or "nil"
+	CONFIG[#CONFIG + 1] = {
+		log = false,
+		remarks = "Automatically switch TCP master node",
+		currentNode = ucic2:get_all(application, tcp_main),
+		set = function(server)
+			ucic2:set(application, "@auto_switch[0]", "tcp_main1", server)
+		end
+	}
 
 	local tcp_node_table = ucic2:get(application, "@auto_switch[0]", "tcp_node")
 	if tcp_node_table then
 		local nodes = {}
 		local new_nodes = {}
-		for k,node in ipairs(tcp_node_table) do
+		for k,v in ipairs(tcp_node_table) do
+			local node = v
+			local currentNode
+			if node then
+				currentNode = ucic2:get_all(application, node)
+			end
 			nodes[#nodes + 1] = {
-				log = true,
-				remarks = "TCP spare nodes list[" .. k .. "]",
-				currentNodeId = node,
-				currentNode = node and ucic2:get_all(application, node) or nil,
-				set = function(o, server)
+				log = false,
+				node = node,
+				currentNode = currentNode,
+				remarks = node,
+				set = function(server)
 					for kk, vv in pairs(CONFIG) do
-						if (vv.remarks == "TCP spare nodes list") then
+						if (vv.remarks == "Automatically switch TCP_1 node list") then
 							table.insert(vv.new_nodes, server)
 						end
 					end
@@ -100,13 +118,13 @@ do
 			}
 		end
 		CONFIG[#CONFIG + 1] = {
-			remarks = "TCP spare nodes list",
+			remarks = "Automatically switch TCP node list",
 			nodes = nodes,
 			new_nodes = new_nodes,
-			set = function(o)
+			set = function()
 				for kk, vv in pairs(CONFIG) do
-					if (vv.remarks == "TCP spare nodes list") then
-						log("Refresh the list of TCP standby nodes that are automatically switched")
+					if (vv.remarks == "Automatically switch TCP_1 node list") then
+						log("Refresh the auto switch list")
 						ucic2:set_list(application, "@auto_switch[0]", "tcp_node", vv.new_nodes)
 					end
 				end
@@ -119,39 +137,31 @@ do
 			local node_id = node[".name"]
 			ucic2:foreach(application, "shunt_rules", function(e)
 				local _node_id = node[e[".name"]] or nil
+				local _node
+				if _node_id then
+					_node = ucic2:get_all(application, _node_id)
+				end
 				CONFIG[#CONFIG + 1] = {
 					log = false,
-					currentNodeId = _node_id,
-					currentNode = _node_id and ucic2:get_all(application, _node_id) or nil,
-					remarks = "shunt" .. e.remarks .. "node",
-					set = function(o, server)
+					currentNode = _node,
+					remarks = "Diversion" .. e.remarks .. "Node",
+					set = function(server)
 						ucic2:set(application, node_id, e[".name"], server)
-						o.newNodeId = server
 					end
 				}
 			end)
 
 			local default_node_id = node.default_node
+			local default_node
+			if default_node_id then
+				default_node = ucic2:get_all(application, default_node_id)
+			end
 			CONFIG[#CONFIG + 1] = {
 				log = false,
-				currentNodeId = default_node_id,
-				currentNode = default_node_id and ucic2:get_all(application, default_node_id) or nil,
+				currentNode = default_node,
 				remarks = "Shunt default node",
-				set = function(o, server)
+				set = function(server)
 					ucic2:set(application, node_id, "default_node", server)
-					o.newNodeId = server
-				end
-			}
-
-			local main_node_id = node.main_node
-			CONFIG[#CONFIG + 1] = {
-				log = false,
-				currentNodeId = main_node_id,
-				currentNode = main_node_id and ucic2:get_all(application, main_node_id) or nil,
-				remarks = "Shunt default proxy node",
-				set = function(o, server)
-					ucic2:set(application, node_id, "main_node", server)
-					o.newNodeId = server
 				end
 			}
 		elseif node.protocol and node.protocol == '_balancing' then
@@ -159,13 +169,18 @@ do
 			local nodes = {}
 			local new_nodes = {}
 			if node.balancing_node then
-				for k, node in pairs(node.balancing_node) do
+				for k, v in pairs(node.balancing_node) do
+					local node = v
+					local currentNode
+					if node then
+						currentNode = ucic2:get_all(application, node)
+					end
 					nodes[#nodes + 1] = {
 						log = false,
 						node = node,
-						currentNode = node and ucic2:get_all(application, node) or nil,
+						currentNode = currentNode,
 						remarks = node,
-						set = function(o, server)
+						set = function(server)
 							for kk, vv in pairs(CONFIG) do
 								if (vv.remarks == "Load balancing node list" .. node_id) then
 									table.insert(vv.new_nodes, server)
@@ -179,10 +194,10 @@ do
 				remarks = "Load balancing node list" .. node_id,
 				nodes = nodes,
 				new_nodes = new_nodes,
-				set = function(o)
+				set = function()
 					for kk, vv in pairs(CONFIG) do
-						if (vv.remarks == "Load balancing node list" .. node_id) then
-							log("Refreshing Load balancing node list")
+						if (vv.remarks == "Load Balancing Node List" .. node_id) then
+							log("Refresh the list of load balancing nodes")
 							ucic2:foreach(application, uciType, function(node2)
 								if node2[".name"] == node[".name"] then
 									local index = node2[".index"]
@@ -212,24 +227,28 @@ do
 end
 
 -- Determine whether to filter node keywords
-local filter_keyword_mode = ucic2:get(application, "@global_subscribe[0]", "filter_keyword_mode") or "0"
-local filter_keyword_discard_list = ucic2:get(application, "@global_subscribe[0]", "filter_discard_list") or {}
-local filter_keyword_keep_list = ucic2:get(application, "@global_subscribe[0]", "filter_keep_list") or {}
+local filter_keyword_enabled = ucic2:get(application, "@global_subscribe[0]", "filter_enabled")
+local filter_keyword_table = ucic2:get(application, "@global_subscribe[0]", "filter_keyword")
+local filter_keyword_discarded = ucic2:get(application, "@global_subscribe[0]", "filter_keyword_discarded")
 local function is_filter_keyword(value)
-	if filter_keyword_mode == "1" then
-		for k,v in ipairs(filter_keyword_discard_list) do
-			if value:find(v) then
-				return true
+	if filter_keyword_enabled and filter_keyword_enabled == "1" then
+		if filter_keyword_table then
+			if filter_keyword_discarded and filter_keyword_discarded == "1" then
+				for k,v in ipairs(filter_keyword_table) do
+					if value:find(v) then
+						return true
+					end
+				end
+			else
+				local result = true
+				for k,v in ipairs(filter_keyword_table) do
+					if value:find(v) then
+						result = false
+					end
+				end
+				return result
 			end
 		end
-	elseif filter_keyword_mode == "2" then
-		local result = true
-		for k,v in ipairs(filter_keyword_keep_list) do
-			if value:find(v) then
-				result = false
-			end
-		end
-		return result
 	end
 	return false
 end
@@ -322,7 +341,10 @@ local function processData(szType, content, add_mode)
 		result.remarks = base64Decode(params.remarks)
 	elseif szType == 'vmess' then
 		local info = jsonParse(content)
-		result.type = 'Xray'
+		result.type = 'V2ray'
+		if api.is_finded("xray") then
+			result.type = 'Xray'
+		end
 		result.address = info.add
 		result.port = info.port
 		result.protocol = 'vmess'
@@ -433,10 +455,6 @@ local function processData(szType, content, add_mode)
 			content = content:sub(0, idx_sp - 1)
 		end
 		result.type = "Trojan-Plus"
-		if has_xray then
-			result.type = 'Xray'
-			result.protocol = 'trojan'
-		end
 		result.remarks = UrlDecode(alias)
 		if content:find("@") then
 			local Info = split(content, "@")
@@ -565,7 +583,7 @@ local function processData(szType, content, add_mode)
 		result.group = content.airport
 		result.remarks = content.remarks
 	else
-		log('Not supported temporarily' .. szType .. "Type of node subscription, skip this node.")
+		log('The node subscription of type'.. szType ..' is not supported temporarily, skip this node.")
 		return nil
 	end
 	if not result.remarks or result.remarks == "" then
@@ -612,7 +630,7 @@ local function truncate_nodes()
 	end)
 
 	ucic2:foreach(application, uciType, function(node)
-		if (node.is_sub or node.hashkey) and node.add_mode ~= 'Import' then
+		if (node.is_sub or node.hashkey) and node.add_mode ~= '导入' then
 			ucic2:delete(application, node['.name'])
 		end
 	end)
@@ -624,92 +642,96 @@ end
 local function select_node(nodes, config)
 	local server
 	if config.currentNode then
-		for id, node in pairs(nodes) do
-			-- Special priority Diversion + Remarks
-			if config.currentNode.protocol and config.currentNode.protocol == '_shunt' then
+		--Special priority Diversion + Remarks
+		if config.currentNode.protocol and config.currentNode.protocol == '_shunt' then
+			for id, node in pairs(nodes) do
 				if node.remarks == config.currentNode.remarks then
-					log('Update ['.. config.remarks ..'] shunt matching node:' .. node.remarks)
+					log('Select ['.. config.remarks ..'] split matching node:' .. node.remarks)
 					server = id
 					break
 				end
 			end
-			-- Special priority load balancing + remarks
-			if config.currentNode.protocol and config.currentNode.protocol == '_balancing' then
+		end
+		-- Special priority load balancing + remarks
+		if config.currentNode.protocol and config.currentNode.protocol == '_balancing' then
+			for id, node in pairs(nodes) do
 				if node.remarks == config.currentNode.remarks then
-					log('Update ['.. config.remarks ..'] load balancing matching node:' .. node.remarks)
+					log('Select ['.. config.remarks ..'] load balancing matching node:' .. node.remarks)
 					server = id
 					break
 				end
 			end
-			-- First priority cfgid
-			if not server then
+		end
+		-- First priority cfgid
+		if not server then
+			for id, node in pairs(nodes) do
 				if id == config.currentNode['.name'] then
 					if config.log == nil or config.log == true then
-						log('Update ['.. config.remarks ..'] the first matching node:' .. node.remarks)
+						log('Select ['.. config.remarks ..'] the first matching node:' .. node.remarks)
 					end
 					server = id
 					break
 				end
 			end
-			-- Second priority type + IP + port
-			if not server then
-				if config.currentNode.type and config.currentNode.address and config.currentNode.port then
-					if node.type and node.address and node.port then
-						if node.type == config.currentNode.type and (node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port) then
-							if config.log == nil or config.log == true then
-								log('Update ['.. config.remarks ..'] the second matching node:' .. node.remarks)
-							end
-							server = id
-							break
+		end
+		-- Second priority type + IP + port
+		if not server then
+			for id, node in pairs(nodes) do
+				if node.type and node.address and node.port then
+					if node.type == config.currentNode.type and (node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port) then
+						if config.log == nil or config.log == true then
+							log('Select ['.. config.remarks ..'] the second matching node:' .. node.remarks)
 						end
+						server = id
+						break
 					end
 				end
 			end
-			-- Third priority IP + port
-			if not server then
-				if config.currentNode.address and config.currentNode.port then
-					if node.address and node.port then
-						if node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port then
-							if config.log == nil or config.log == true then
-								log('Update ['.. config.remarks ..'] the third matching node:' .. node.remarks)
-							end
-							server = id
-							break
+		end
+		-- Third priority IP + port
+		if not server then
+			for id, node in pairs(nodes) do
+				if node.address and node.port then
+					if node.address .. ':' .. node.port == config.currentNode.address .. ':' .. config.currentNode.port then
+						if config.log == nil or config.log == true then
+							log('Select ['.. config.remarks ..'] the third matching node:' .. node.remarks)
 						end
+						server = id
+						break
 					end
 				end
 			end
-			-- Fourth priority IP
-			if not server then
-				if config.currentNode.address then
-					if node.address then
-						if node.address == config.currentNode.address then
-							if config.log == nil or config.log == true then
-								log('Update ['.. config.remarks ..'] the fourth matching node:' .. node.remarks)
-							end
-							server = id
-							break
+		end
+		-- Fourth priority IP
+		if not server then
+			for id, node in pairs(nodes) do
+				if node.address then
+					if node.address == config.currentNode.address then
+						if config.log == nil or config.log == true then
+							log('Select ['.. config.remarks ..'] the fourth matching node:' .. node.remarks)
 						end
+						server = id
+						break
 					end
 				end
 			end
-			-- Fifth priority note
-			if not server then
-				if config.currentNode.remarks then
-					if node.remarks then
-						if node.remarks == config.currentNode.remarks then
-							if config.log == nil or config.log == true then
-								log('Update ['.. config.remarks ..'] fifth matching node:' .. node.remarks)
-							end
-							server = id
-							break
+		end
+		-- Fifth priority note
+		if not server then
+			for id, node in pairs(nodes) do
+				if node.remarks then
+					if node.remarks == config.currentNode.remarks then
+						if config.log == nil or config.log == true then
+							log('Select ['.. config.remarks ..'] the fifth matching node:' .. node.remarks)
 						end
+						server = id
+						break
 					end
 				end
 			end
 		end
 	end
-	-- 
+	-- Not yet, just find one
 	if not server then
 		server = ucic2:get_all(application, '@' .. uciType .. '[0]')
 		if server then
@@ -720,7 +742,7 @@ local function select_node(nodes, config)
 		end
 	end
 	if server then
-		config.set(config, server)
+		config.set(server)
 	end
 end
 
@@ -732,7 +754,7 @@ local function update_node(manual)
 	-- delet all for subscribe nodes
 	ucic2:foreach(application, uciType, function(node)
 		-- If it is a manually imported node, it will not participate in the deletion
-		if manual == 0 and (node.is_sub or node.hashkey) and node.add_mode ~= '导入' then
+		if manual == 0 and (node.is_sub or node.hashkey) and node.add_mode ~= 'Import' then
 			ucic2:delete(application, node['.name'])
 		end
 	end)
@@ -754,13 +776,12 @@ local function update_node(manual)
 		ucic3:foreach(application, uciType, function(node)
 			nodes[node['.name']] = node
 		end)
-
 		for _, config in pairs(CONFIG) do
 			if config.nodes and type(config.nodes) == "table" then
 				for kk, vv in pairs(config.nodes) do
 					select_node(nodes, vv)
 				end
-				config.set(config)
+				config.set()
 			else
 				select_node(nodes, config)
 			end
@@ -769,15 +790,11 @@ local function update_node(manual)
 		--[[
 		for k, v in pairs(CONFIG) do
 			if type(v.new_nodes) == "table" and #v.new_nodes > 0 then
-				local new_node_list = ""
 				for kk, vv in pairs(v.new_nodes) do
-					new_node_list = new_node_list .. vv .. " "
-				end
-				if new_node_list ~= "" then
-					print(v.remarks, new_node_list)
+					print(vv)
 				end
 			else
-				print(v.remarks, v.newNodeId)
+				print(v.new_nodes)
 			end
 		end
 		]]--
@@ -846,18 +863,18 @@ local function parse_link(raw, remark, manual)
 					if (not manual and is_filter_keyword(result.remarks)) or
 						not result.address or
 						result.remarks == "NULL" or
-						result.address:match("[^0-9a-zA-Z%-%_%.%s]") or
-						not result.address:find("%.") or
-						result.address:sub(#result.address) == "."
+						result.address:match("[^0-9a-zA-Z%-%_%.%s]") or -- No one uses Chinese domain names for addresses in Chinese, even if the Chinese domain has Puny Code SB airport
+						not result.address:find("%.") or --Although there is no. It is also considered a domain, but no one would do it like this.
+						result.address:sub(#result.address) == "." -- 结尾是.
 					then
-						log('Discard the filter node:' .. result.type .. ' node, ' .. result.remarks)
+						log('Discard filter node: '.. result.type ..' node, ' .. result.remarks)
 					else
 						tinsert(all_nodes, result)
 					end
 				end
 			end
 		end
-		log('Number of successfully resolved nodes:' .. #all_nodes)
+		log('Number of successfully resolved nodes: '.. #all_nodes)
 	else
 		if not manual then
 			log('The content of the obtained node is empty...')
@@ -887,11 +904,11 @@ if arg[1] then
 	if arg[1] == "start" then
 		local count = luci.sys.exec("echo -n $(uci show " .. application .. " | grep @subscribe_list | grep -c \"enabled='1'\")")
 		if count and tonumber(count) > 0 then
-			log('Subscribing')
+			log('Start subscribing...')
 			xpcall(execute, function(e)
 				log(e)
 				log(debug.traceback())
-				log('An error has occurred and the service is being restored')
+				log('v)
 			end)
 			log('Subscribed...')
 		else

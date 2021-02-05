@@ -45,7 +45,7 @@ test_proxy() {
 	if [ "$status" = "200" ]; then
 		result=0
 	else
-		status2=$(test_url "https://api.ipify.org" $try)
+		status2=$(test_url "https://www.baidu.com" $try)
 		if [ "$status2" = "200" ]; then
 			result=1
 		else
@@ -56,61 +56,56 @@ test_proxy() {
 }
 
 test_auto_switch() {
-	local TYPE=$1
-	local b_tcp_nodes=$2
+	local type=$1
+	local b_tcp_nodes=$3
 	local now_node
-	if [ -f "/var/etc/$CONFIG/id/${TYPE}" ]; then
-		now_node=$(cat /var/etc/$CONFIG/id/${TYPE})
+	if [ -f "/var/etc/$CONFIG/id/${type}" ]; then
+		now_node=$(cat /var/etc/$CONFIG/id/${type})
 	else
 		return 1
 	fi
 
 	status=$(test_proxy)
 	if [ "$status" == 2 ]; then
-		echolog "Automatic switching detection: unable to connect to the network, please check whether the network is normal"
+		echolog "Automatic switching detection: unable to connect to the network, please check whether the network is normal!"
 		return 2
 	fi
 	
 	local restore_switch=$(config_t_get auto_switch restore_switch 0)
 	if [ "$restore_switch" == "1" ]; then
 		#Check whether the master node can be used
-		local main_node=$(config_t_get global tcp_node nil)
-		if [ "$main_node" != "nil" ] && [ "$now_node" != "$main_node" ]; then
+		local main_node=$(config_t_get auto_switch tcp_main)
+		if [ "$now_node" != "$main_node" ]; then
 			local node_type=$(echo $(config_n_get $main_node type) | tr 'A-Z' 'a-z')
 			if [ "$node_type" == "socks" ]; then
 				local node_address=$(config_n_get $main_node address)
 				local node_port=$(config_n_get $main_node port)
-				[ -n "$node_address" ] && [ -n "$node_port" ] && {
-					local curlx="socks5h://$node_address:$node_port"
-					local node_username=$(config_n_get $main_node username)
-					local node_password=$(config_n_get $main_node password)
-					[ -n "$node_username" ] && [ -n "$node_password" ] && curlx="socks5h://$node_username:$node_password@$node_address:$node_port"
-				}
+				[ -n "$node_address" ] && [ -n "$node_port" ] && local curlx="socks5h://$node_address:$node_port"
 			else
-				local tmp_port=$(/usr/share/${CONFIG}/app.sh get_new_port 61080 tcp)
-				/usr/share/${CONFIG}/app.sh run_socks "auto_switch" "$main_node" "127.0.0.1" "$tmp_port" "/var/etc/${CONFIG}/auto_switch.json"
+				local tmp_port=$(/usr/share/passwall/app.sh get_new_port 61080 tcp)
+				/usr/share/passwall/app.sh run_socks "$main_node" "127.0.0.1" "$tmp_port" "/var/etc/passwall/auto_switch.json" "10"
 				local curlx="socks5h://127.0.0.1:$tmp_port"
 			fi
 			sleep 10s
 			proxy_status=$(test_url "https://www.google.com/generate_204" 3 3 "-x $curlx")
-			top -bn1 | grep -v "grep" | grep "/var/etc/${CONFIG}/auto_switch.json" | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1
+			ps -w | grep -v "grep" | grep "/var/etc/passwall/auto_switch.json" | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1
 			if [ "$proxy_status" -eq 200 ]; then
 				#The main node is normal, switch to the main node
-				echolog "Automatic switching detection: ${TYPE} master node is normal, switch to master node!"
-				/usr/share/${CONFIG}/app.sh node_switch ${TYPE} ${main_node}
+				echolog "Automatic switching detection: ${type} master node is normal, switch to the master node! "
+				/usr/share/passwall/app.sh node_switch $type $2 $main_node
 				return 0
 			fi
 		fi
 	fi
 	
 	if [ "$status" == 0 ]; then
-		#echolog "Automatic switching detection: ${TYPE} node [$(config_n_get $now_node type) $(config_n_get $now_node remarks)] is normal."
+		echolog "Automatic switching detection: ${type} node $(config_n_get $now_node type) $(config_n_get $now_node address) $(config_n_get $now_node port)正常。"
 		return 0
 	elif [ "$status" == 1 ]; then
-		echolog "Automatic switching detection: ${TYPE} node is abnormal, start switching nodes!"
+		echolog "Automatic switching detection: ${type} node is abnormal, start switching nodes! "
 		local new_node
 		in_backup_nodes=$(echo $b_tcp_nodes | grep $now_node)
-		# Determine whether the current node exists in the standby node list
+		#Determine whether the current node exists in the standby node list
 		if [ -z "$in_backup_nodes" ]; then
 			# If it does not exist, set the first node as a new node
 			new_node=$(echo $b_tcp_nodes | awk -F ' ' '{print $1}')
@@ -124,15 +119,15 @@ test_auto_switch() {
 				new_node=$next_node
 			fi
 		fi
-		/usr/share/${CONFIG}/app.sh node_switch ${TYPE} ${new_node}
+		/usr/share/passwall/app.sh node_switch $type $2 $new_node
 		sleep 10s
 		# After switching the node, wait 10 seconds and then check again, if it still fails, continue to switch until it is available
 		status2=$(test_proxy)
 		if [ "$status2" -eq 0 ]; then
-			echolog "Automatic switching detection: ${TYPE} node switching is complete"
+			echolog "Automatic switching detection: ${type} node switching is complete!"
 			return 0
 		elif [ "$status2" -eq 1 ]; then
-			test_auto_switch ${TYPE} "${b_tcp_nodes}"
+			test_auto_switch $1 $2 "$3"
 		elif [ "$status2" -eq 2 ]; then
 			return 2
 		fi
@@ -150,7 +145,7 @@ start() {
 	do
 		TCP_NODE=$(config_t_get auto_switch tcp_node nil)
 		[ -n "$TCP_NODE" -a "$TCP_NODE" != "nil" ] && {
-			test_auto_switch TCP "$TCP_NODE"
+			test_auto_switch TCP tcp "$TCP_NODE"
 		}
 		delay=$(config_t_get auto_switch testing_time 1)
 		sleep ${delay}m
