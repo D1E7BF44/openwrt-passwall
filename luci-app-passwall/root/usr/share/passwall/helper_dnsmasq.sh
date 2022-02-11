@@ -50,7 +50,7 @@ logic_restart() {
 	else
 		/etc/init.d/dnsmasq restart >/dev/null 2>&1
 	fi
-	echolog "重启 dnsmasq 服务"
+	echolog "Restart the dnsmasq service"
 	LOG_FILE=${_LOG_FILE}
 }
 
@@ -60,7 +60,7 @@ restart() {
 	_LOG_FILE=$LOG_FILE
 	[ -n "$no_log" ] && LOG_FILE="/dev/null"
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
-	echolog "重启 dnsmasq 服务"
+	echolog "Restart the dnsmasq service"
 	LOG_FILE=${_LOG_FILE}
 }
 
@@ -123,23 +123,23 @@ add() {
 	mkdir -p "${TMP_DNSMASQ_PATH}" "${DNSMASQ_PATH}" "/tmp/dnsmasq.d"
 	count_hosts_str="!"
 
-	#屏蔽列表
+	# Block list
 	[ -s "${RULES_PATH}/block_host" ] && {
 		cat "${RULES_PATH}/block_host" | tr -s '\n' | grep -v "^#" | sort -u | gen_address_items address="0.0.0.0" outf="${TMP_DNSMASQ_PATH}/00-block_host.conf"
 	}
 
-	#始终用国内DNS解析节点域名
+	# Always use china DNS to resolve node domain names
 	fwd_dns="${LOCAL_DNS}"
 	servers=$(uci show "${CONFIG}" | grep ".address=" | cut -d "'" -f 2)
 	hosts_foreach "servers" host_from_url | grep '[a-zA-Z]$' | sort -u | gen_items ipsets="vpsiplist,vpsiplist6" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/10-vpsiplist_host.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
 	echolog "  - [$?]节点列表中的域名(vpsiplist)：${fwd_dns:-默认}"
 
-	#始终用国内DNS解析直连（白名单）列表
+	# Always use the china DNS to resolve the direct connection (whitelist) list
 	[ -s "${RULES_PATH}/direct_host" ] && {
 		fwd_dns="${LOCAL_DNS}"
 		#[ -n "$CHINADNS_DNS" ] && unset fwd_dns
 		cat "${RULES_PATH}/direct_host" | tr -s '\n' | grep -v "^#" | sort -u | gen_items ipsets="whitelist,whitelist6" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/11-direct_host.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-		echolog "  - [$?]域名白名单(whitelist)：${fwd_dns:-默认}"
+		echolog "  - [$?]Domain whitelist (whitelist): ${fwd_dns:-default}"
 	}
 	
 	subscribe_list=""
@@ -149,12 +149,12 @@ add() {
 	done
 	[ -n "$subscribe_list" ] && {
 		if [ "$(config_t_get global_subscribe subscribe_proxy 0)" = "0" ]; then
-			#如果没有开启通过代理订阅
+			# If subscription via proxy is not enabled
 			fwd_dns="${LOCAL_DNS}"
 			echo -e "$subscribe_list" | sort -u | gen_items ipsets="whitelist,whitelist6" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/12-subscribe.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-			echolog "  - [$?]节点订阅域名(whitelist)：${fwd_dns:-默认}"
+			echolog "  - [$?]Node subscription domain name (whitelist): ${fwd_dns:-default}"
 		else
-			#如果开启了通过代理订阅
+			# If subscription via proxy is enabled
 			fwd_dns="${TUN_DNS}"
 			local ipset_flag="blacklist,blacklist6"
 			if [ "${NO_PROXY_IPV6}" = "1" ]; then
@@ -163,11 +163,11 @@ add() {
 			fi
 			[ -n "${REMOTE_FAKEDNS}" ] && unset ipset_flag
 			echo -e "$subscribe_list" | sort -u | gen_items ipsets="${ipset_flag}" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/91-subscribe.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-			echolog "  - [$?]节点订阅域名(blacklist)：${fwd_dns:-默认}"
+			echolog "  - [$?]Node subscription domain name (blacklist): ${fwd_dns:-default}"
 		fi
 	}
 	
-	#始终使用远程DNS解析代理（黑名单）列表
+	# Always use remote DNS resolution proxy (blacklist) list
 	[ -s "${RULES_PATH}/proxy_host" ] && {
 		local ipset_flag="blacklist,blacklist6"
 		if [ "${NO_PROXY_IPV6}" = "1" ]; then
@@ -177,10 +177,10 @@ add() {
 		fwd_dns="${TUN_DNS}"
 		[ -n "${REMOTE_FAKEDNS}" ] && unset ipset_flag
 		cat "${RULES_PATH}/proxy_host" | tr -s '\n' | grep -v "^#" | sort -u | gen_items ipsets="${ipset_flag}" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/97-proxy_host.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-		echolog "  - [$?]代理域名表(blacklist)：${fwd_dns:-默认}"
+		echolog "  - [$?]Proxy domain name table (blacklist): ${fwd_dns:-default}"
 	}
 
-	#分流规则
+	# Diversion rules
 	[ "$(config_n_get $TCP_NODE protocol)" = "_shunt" ] && {
 		fwd_dns="${TUN_DNS}"
 		msg_dns="${fwd_dns}"
@@ -212,7 +212,7 @@ add() {
 				msg_dns="${fwd_dns}"
 			}
 		done
-		echolog "  - [$?]V2ray/Xray分流规则(shuntlist)：${msg_dns:-默认}"
+		echolog "  - [$?]V2ray/Xray shuntlist：${msg_dns:-default}"
 	}
 	
 	[ -s "${RULES_PATH}/direct_host" ] && direct_hosts_str="$(echo -n $(cat ${RULES_PATH}/direct_host | tr -s '\n' | grep -v "^#" | sort -u) | sed "s/ /|/g")"
@@ -220,9 +220,9 @@ add() {
 	[ -n "$direct_hosts_str" ] && count_hosts_str="${count_hosts_str}|${direct_hosts_str}"
 	[ -n "$proxy_hosts_str" ] && count_hosts_str="${count_hosts_str}|${proxy_hosts_str}"
 
-	#如果没有使用回国模式
+	# If you do not use the return mode
 	if [ -z "${returnhome}" ]; then
-		# GFW 模式
+		# GFW mode
 		[ -s "${RULES_PATH}/gfwlist" ] && {
 			grep -v -E "$count_hosts_str" "${RULES_PATH}/gfwlist" > "${TMP_PATH}/gfwlist"
 			
@@ -235,21 +235,21 @@ add() {
 			[ -n "$CHINADNS_DNS" ] && unset fwd_dns
 			[ -n "${REMOTE_FAKEDNS}" ] && unset ipset_flag
 			sort -u "${TMP_PATH}/gfwlist" | gen_items ipsets="${ipset_flag}" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/99-gfwlist.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-			echolog "  - [$?]防火墙域名表(gfwlist)：${fwd_dns:-默认}"
+			echolog "  - [$?]Firewall domain name table (gfwlist): ${fwd_dns:-default}"
 			rm -f "${TMP_PATH}/gfwlist"
 		}
 		
-		# 中国列表以外 模式
+		# Outside the Chinese list mode
 		[ -n "${CHINADNS_DNS}" ] && {
 			fwd_dns="${LOCAL_DNS}"
 			[ -n "$CHINADNS_DNS" ] && unset fwd_dns
 			[ -s "${RULES_PATH}/chnlist" ] && {
 				grep -v -E "$count_hosts_str" "${RULES_PATH}/chnlist" | gen_items ipsets="chnroute,chnroute6" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/19-chinalist_host.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-				echolog "  - [$?]中国域名表(chnroute)：${fwd_dns:-默认}"
+				echolog "  - [$?]Chinese domain name table (chnroute): ${fwd_dns:-default}"
 			}
 		}
 	else
-		#回国模式
+		# Return mode
 		[ -s "${RULES_PATH}/chnlist" ] && {
 			grep -v -E "$count_hosts_str" "${RULES_PATH}/chnlist" > "${TMP_PATH}/chnlist"
 			
@@ -261,7 +261,7 @@ add() {
 			fwd_dns="${TUN_DNS}"
 			[ -n "${REMOTE_FAKEDNS}" ] && unset ipset_flag
 			sort -u "${TMP_PATH}/chnlist" | gen_items ipsets="${ipset_flag}" dnss="${fwd_dns}" outf="${TMP_DNSMASQ_PATH}/99-chinalist_host.conf" ipsetoutf="${TMP_DNSMASQ_PATH}/ipset.conf"
-			echolog "  - [$?]中国域名表(chnroute)：${fwd_dns:-默认}"
+			echolog "  - [$?]chnroute: ${fwd_dns:-default}"
 			rm -f "${TMP_PATH}/chnlist"
 		}
 	fi
@@ -277,9 +277,9 @@ add() {
 			no-poll
 			no-resolv
 		EOF
-		echolog "  - [$?]以上所列以外及默认(ChinaDNS-NG)：${CHINADNS_DNS}"
+		echolog "  - [$?]Other than listed above and default (ChinaDNS-NG): ${CHINADNS_DNS}"
 	}
-	echolog "  - PassWall必须依赖于Dnsmasq，如果你自行配置了错误的DNS流程，将会导致域名(直连/代理域名)分流失效！！！"
+	echolog "  - PassWall must rely on Dnsmasq. If you configure the wrong DNS process by yourself, it will cause the domain name (direct connection/proxy domain name) shunting to fail! ! !"
 	LOG_FILE=${_LOG_FILE}
 }
 
