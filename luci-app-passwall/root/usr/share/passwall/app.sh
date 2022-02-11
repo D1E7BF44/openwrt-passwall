@@ -1470,7 +1470,7 @@ dns_listen_port=${DNS_PORT}
 
 DEFAULT_DNS=$(uci show dhcp | grep "@dnsmasq" | grep "\.server=" | awk -F '=' '{print $2}' | sed "s/'//g" | tr ' ' '\n' | grep -v "\/" | head -2 | sed ':label;N;s/\n/,/;b label')
 [ -z "${DEFAULT_DNS}" ] && DEFAULT_DNS=$(echo -n $(sed -n 's/^nameserver[ \t]*\([^ ]*\)$/\1/p' "${RESOLVFILE}" | grep -v -E "0.0.0.0|127.0.0.1|::" | head -2) | tr ' ' ',')
-LOCAL_DNS="${DEFAULT_DNS:-119.29.29.29}"
+LOCAL_DNS="${DEFAULT_DNS:-1.1.1.1}"
 
 PROXY_IPV6=$(config_t_get global_forwarding ipv6_tproxy 0)
 
