@@ -70,7 +70,7 @@ o:value("1:65535", translate("All"))
 
 ---- TCP Redir Ports
 o = s:option(Value, "tcp_redir_ports", translate("TCP Redir Ports"))
-o.default = "22,25,53,143,465,587,853,993,995,80,443"
+o.default = "1:65535"
 o:value("1:65535", translate("All"))
 o:value("22,25,53,143,465,587,853,993,995,80,443", translate("Common Use"))
 o:value("80,443", translate("Only Web"))
@@ -143,8 +143,8 @@ s.anonymous = true
 s.addremove = false
 
 o = s:option(MultiValue, "status", translate("Status info"))
-o:value("big_icon", translate("Big icon")) -- 大图标
-o:value("show_check_port", translate("Show node check")) -- 显示节点检测
-o:value("show_ip111", translate("Show Show IP111")) -- 显示IP111
+o:value("big_icon", translate("Big icon"))
+o:value("show_check_port", translate("Show node check"))
+o:value("show_ipify", translate("Show Show IPIFY"))
 
 return m
