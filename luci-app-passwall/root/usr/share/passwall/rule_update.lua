@@ -25,12 +25,12 @@ local ip_pattern = "^%d+%.%d+%.%d+%.%d+"
 local ip4_ipset_pattern = "^%d+%.%d+%.%d+%.%d+[%/][%d]+$"
 local ip6_ipset_pattern = ":-[%x]+%:+[%x]-[%/][%d]+$"
 local domain_pattern = "([%w%-%_]+%.[%w%.%-%_]+)[%/%*]*"
-local excluded_domain = {"apple.com","sina.cn","sina.com.cn","baidu.com","byr.cn","jlike.com","weibo.com","zhongsou.com","youdao.com","sogou.com","so.com","soso.com","aliyun.com","taobao.com","jd.com","qq.com","bing.com"}
+local excluded_domain = {}
 
-local gfwlist_url = ucic:get(name, "@global_rules[0]", "gfwlist_url") or {"https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt"}
-local chnroute_url = ucic:get(name, "@global_rules[0]", "chnroute_url") or {"https://ispip.clang.cn/all_cn.txt"}
-local chnroute6_url =  ucic:get(name, "@global_rules[0]", "chnroute6_url") or {"https://ispip.clang.cn/all_cn_ipv6.txt"}
-local chnlist_url = ucic:get(name, "@global_rules[0]", "chnlist_url") or {"https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/accelerated-domains.china.conf","https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/apple.china.conf","https://cdn.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/google.china.conf"}
+local gfwlist_url = ucic:get(name, "@global_rules[0]", "gfwlist_url") or {"https://example.com"}
+local chnroute_url = ucic:get(name, "@global_rules[0]", "chnroute_url") or {"https://example.com"}
+local chnroute6_url =  ucic:get(name, "@global_rules[0]", "chnroute6_url") or {"https://example.com"}
+local chnlist_url = ucic:get(name, "@global_rules[0]", "chnlist_url") or {"https://example.com","https://example1.com","https://example2.com"}
 local geoip_api =  "https://api.github.com/repos/Loyalsoldier/v2ray-rules-dat/releases/latest"
 local geosite_api =  "https://api.github.com/repos/Loyalsoldier/v2ray-rules-dat/releases/latest"
 local v2ray_asset_location = ucic:get_first(name, 'global_rules', "v2ray_location_asset", "/usr/share/v2ray/")
@@ -115,7 +115,7 @@ local function fetch_rule(rule_name,rule_type,url,exclude_domain)
 	local download_file_tmp = "/tmp/" ..rule_name.. "_dl"
 	local unsort_file_tmp = "/tmp/" ..rule_name.. "_unsort"
 
-	log(rule_name.. " 开始更新...")
+	log(rule_name.. " Start Update...")
 	for k,v in ipairs(url) do
 		sret_tmp = curl(v, download_file_tmp..k)
 		if sret_tmp == 200 then
@@ -174,7 +174,7 @@ local function fetch_rule(rule_name,rule_type,url,exclude_domain)
 			os.remove(download_file_tmp..k)				
 		else
 			sret = 0
-			log(rule_name.. " 第" ..k.. "条规则:" ..v.. "下载失败！")
+			log(rule_name.. " Rule " ..k.. ": " ..v.. "Download failed!")
 		end
 	end
 
@@ -197,12 +197,12 @@ local function fetch_rule(rule_name,rule_type,url,exclude_domain)
 			local count = line_count(file_tmp)
 			luci.sys.exec("mv -f "..file_tmp .. " " ..rule_path .. "/" ..rule_name)
 			reboot = 1
-			log(rule_name.. " 更新成功，总规则数 " ..count.. " 条。")
+			log(rule_name.. " The update is successful, the total number of rules is " ..count.. ".")
 		else
-			log(rule_name.. " 版本一致，无需更新。")
+			log(rule_name.. " The version is the same, no need to update.")
 		end
 	else
-		log(rule_name.. " 文件下载失败！")
+		log(rule_name.. " File download failed!")
 	end
 	os.remove(file_tmp)
 	return 0
@@ -224,9 +224,8 @@ local function fetch_chnlist()
 	fetch_rule("chnlist","domain",chnlist_url,false)
 end
 
---获取geoip
 local function fetch_geoip()
-	--请求geoip
+
 	xpcall(function()
 		local json_str = curl(geoip_api)
 		local json = jsonc.parse(json_str)
@@ -245,7 +244,7 @@ local function fetch_geoip()
 						if nixio.fs.access(v2ray_asset_location .. "geoip.dat") then
 							luci.sys.call(string.format("cp -f %s %s", v2ray_asset_location .. "geoip.dat", "/tmp/geoip.dat"))
 							if luci.sys.call('sha256sum -c /tmp/geoip.dat.sha256sum > /dev/null 2>&1') == 0 then
-								log("geoip 版本一致，无需更新。")
+								log("geoip The version is the same, no need to update.")
 								return 1
 							end
 						end
@@ -255,10 +254,10 @@ local function fetch_geoip()
 								if luci.sys.call('sha256sum -c /tmp/geoip.dat.sha256sum > /dev/null 2>&1') == 0 then
 									luci.sys.call(string.format("mkdir -p %s && cp -f %s %s", v2ray_asset_location, "/tmp/geoip.dat", v2ray_asset_location .. "geoip.dat"))
 									reboot = 1
-									log("geoip 更新成功。")
+									log("geoip update completed.")
 									return 1
 								else
-									log("geoip 更新失败，请稍后再试。")
+									log("geoip Update failed, please try again later.")
 								end
 								break
 							end
@@ -275,9 +274,8 @@ local function fetch_geoip()
 	return 0
 end
 
---获取geosite
 local function fetch_geosite()
-	--请求geosite
+
 	xpcall(function()
 		local json_str = curl(geosite_api)
 		local json = jsonc.parse(json_str)
@@ -296,7 +294,7 @@ local function fetch_geosite()
 						if nixio.fs.access(v2ray_asset_location .. "geosite.dat") then
 							luci.sys.call(string.format("cp -f %s %s", v2ray_asset_location .. "geosite.dat", "/tmp/geosite.dat"))
 							if luci.sys.call('sha256sum -c /tmp/geosite.dat.sha256sum > /dev/null 2>&1') == 0 then
-								log("geosite 版本一致，无需更新。")
+								log("geosite The version is the same, no need to update.")
 								return 1
 							end
 						end
@@ -306,10 +304,10 @@ local function fetch_geosite()
 								if luci.sys.call('sha256sum -c /tmp/geosite.dat.sha256sum > /dev/null 2>&1') == 0 then
 									luci.sys.call(string.format("mkdir -p %s && cp -f %s %s", v2ray_asset_location, "/tmp/geosite.dat", v2ray_asset_location .. "geosite.dat"))
 									reboot = 1
-									log("geosite 更新成功。")
+									log("geosite update completed.")
 									return 1
 								else
-									log("geosite 更新失败，请稍后再试。")
+									log("geosite Update failed, please try again later.")
 								end
 								break
 							end
@@ -357,12 +355,12 @@ if gfwlist_update == 0 and chnroute_update == 0 and chnroute6_update == 0 and ch
 	os.exit(0)
 end
 
-log("开始更新规则...")
+log("Start updating rules...")
 if tonumber(gfwlist_update) == 1 then
 	xpcall(fetch_gfwlist,function(e)
 		log(e)
 		log(debug.traceback())
-		log('更新gfwlist发生错误...')
+		log('Error updating gfwlist...')
 	end)
 end
 
@@ -370,7 +368,7 @@ if tonumber(chnroute_update) == 1 then
 	xpcall(fetch_chnroute,function(e)
 		log(e)
 		log(debug.traceback())
-		log('更新chnroute发生错误...')
+		log('Error updating chnroute...')
 	end)
 end
 
@@ -378,7 +376,7 @@ if tonumber(chnroute6_update) == 1 then
 	xpcall(fetch_chnroute6,function(e)
 		log(e)
 		log(debug.traceback())
-		log('更新chnroute6发生错误...')
+		log('Error updating chnroute6...')
 	end)
 end
 
@@ -386,19 +384,19 @@ if tonumber(chnlist_update) == 1 then
 	xpcall(fetch_chnlist,function(e)
 		log(e)
 		log(debug.traceback())
-		log('更新chnlist发生错误...')
+		log('Error updating chnlist...')
 	end)
 end
 
 if tonumber(geoip_update) == 1 then
-	log("geoip 开始更新...")
+	log("geoip starts updating...")
 	local status = fetch_geoip()
 	os.remove("/tmp/geoip.dat")
 	os.remove("/tmp/geoip.dat.sha256sum")
 end
 
 if tonumber(geosite_update) == 1 then
-	log("geosite 开始更新...")
+	log("geosite starts updating...")
 	local status = fetch_geosite()
 	os.remove("/tmp/geosite.dat")
 	os.remove("/tmp/geosite.dat.sha256sum")
@@ -414,7 +412,7 @@ ucic:save(name)
 luci.sys.call("uci commit " .. name)
 
 if reboot == 1 then
-	log("重启服务，应用新的规则。")
+	log("Restart the service to apply the new rules.")
 	luci.sys.call("/usr/share/" .. name .. "/iptables.sh flush_ipset > /dev/null 2>&1 &")
 end
-log("规则更新完毕...")
+log("Rules have been updated...")
