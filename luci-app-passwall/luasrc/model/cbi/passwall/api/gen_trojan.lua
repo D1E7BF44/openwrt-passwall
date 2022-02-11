@@ -5,7 +5,7 @@ local json = api.jsonc
 local var = api.get_args(arg)
 local node_section = var["-node"]
 if not node_section then
-    print("-node 不能为空")
+    print("-node Can not be empty")
     return
 end
 local run_type = var["-run_type"]
